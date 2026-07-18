@@ -20,21 +20,12 @@ npm run dev                  # http://localhost:3000
 
 ## One-time cloud setup (~15 minutes)
 
-1. **Supabase** — create a project at supabase.com (free tier):
-   - SQL Editor → paste and run `supabase/migrations/0001_init.sql`
-     (creates tables, RLS, the email allowlist + signup trigger, and the `session-files` bucket).
-   - Auth → Email Templates → **Magic Link**: change the link to
-     `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
-     (required by the server-side auth flow).
-   - Auth → URL Configuration → set Site URL to the deployed domain (and add
-     `http://localhost:3000` to redirect URLs for local dev).
-   - Project Settings → API → copy URL, anon key, service-role key into env vars.
-   - To allow the second user later: `insert into allowed_emails values ('their@email');`
-     and add them to `ALLOWED_EMAILS`.
-2. **Gemini key** — aistudio.google.com → Get API key → `GOOGLE_GENERATIVE_AI_API_KEY`.
-3. **Vercel** — `npx vercel` (link project) → add all env vars from `.env.example` →
-   `npx vercel --prod`. The daily keepalive cron in `vercel.json` registers on deploy
-   (Settings → Cron Jobs to confirm) and prevents Supabase's 7-day inactivity pause.
+Follow **[SETUP.md](SETUP.md)** — a click-by-click guide (Supabase → Gemini key → Vercel)
+with a checkpoint after every step. No custom SMTP and no email-template editing needed:
+the app handles Supabase's default magic-link emails.
+
+To allow the second user later: run `insert into allowed_emails values ('their@email');`
+in the Supabase SQL Editor and add the address to `ALLOWED_EMAILS` (locally and on Vercel).
 
 ## Phase 1 verification checklist (run after cloud setup)
 

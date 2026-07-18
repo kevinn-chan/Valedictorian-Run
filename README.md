@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Valedictorian Run
 
-## Getting Started
+A private, two-user study app: drop a course's files (lecture PDFs, notes, cheatsheets) into a
+**session**, and it compiles them into a topic wiki, summaries, a learning plan, spaced-repetition
+cue cards, and a Q&A chat that answers only from your materials — with page citations.
 
-First, run the development server:
+Docs: [PLAN.md](PLAN.md) (architecture + phases) · [PLATFORM-FACTS.md](PLATFORM-FACTS.md)
+(verified platform limits) · [PRODUCT.md](PRODUCT.md) (design context).
+
+Stack: Next.js 16 (App Router) on Vercel Hobby · Supabase Free (Postgres + Auth + Storage) ·
+Gemini API free tier via the Vercel AI SDK (OpenAI Tier 3 as break-glass). Runs at $0/month.
+
+## Local dev
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # fill in values (see One-time setup)
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## One-time cloud setup (~15 minutes)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Supabase** — create a project at supabase.com (free tier):
+   - SQL Editor → paste and run `supabase/migrations/0001_init.sql`
+     (creates tables, RLS, the email allowlist + signup trigger, and the `session-files` bucket).
+   - Auth → Email Templates → **Magic Link**: change the link to
+     `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+     (required by the server-side auth flow).
+   - Auth → URL Configuration → set Site URL to the deployed domain (and add
+     `http://localhost:3000` to redirect URLs for local dev).
+   - Project Settings → API → copy URL, anon key, service-role key into env vars.
+   - To allow the second user later: `insert into allowed_emails values ('their@email');`
+     and add them to `ALLOWED_EMAILS`.
+2. **Gemini key** — aistudio.google.com → Get API key → `GOOGLE_GENERATIVE_AI_API_KEY`.
+3. **Vercel** — `npx vercel` (link project) → add all env vars from `.env.example` →
+   `npx vercel --prod`. The daily keepalive cron in `vercel.json` registers on deploy
+   (Settings → Cron Jobs to confirm) and prevents Supabase's 7-day inactivity pause.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Phase 1 verification checklist (run after cloud setup)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] Sign in with an allowlisted email via magic link on the deployed URL
+- [ ] A non-allowlisted email is rejected (signup trigger raises)
+- [ ] RLS probe: second user cannot select another user's rows
+- [ ] Vercel → Cron Jobs shows a successful `/api/keepalive` run

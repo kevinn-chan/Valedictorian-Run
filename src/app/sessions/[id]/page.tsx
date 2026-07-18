@@ -93,6 +93,12 @@ export default async function SessionPage({
             >
               Ask
             </Link>
+            <Link
+              href={`/sessions/${session.id}/quiz`}
+              className="hover:underline"
+            >
+              Mock exam
+            </Link>
           </nav>
         )}
       </header>

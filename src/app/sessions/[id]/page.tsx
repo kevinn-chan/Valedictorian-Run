@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Uploader } from "./uploader";
 import { CompileButton } from "./compile-button";
+import { CardsButton } from "./cards-button";
 
 const CHIP: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -38,6 +39,18 @@ export default async function SessionPage({
     .eq("session_id", id)
     .order("created_at", { ascending: false });
 
+  const [{ count: cardCount }, { count: dueCount }] = await Promise.all([
+    supabase
+      .from("cards")
+      .select("*", { count: "exact", head: true })
+      .eq("session_id", id),
+    supabase
+      .from("cards")
+      .select("*", { count: "exact", head: true })
+      .eq("session_id", id)
+      .lte("due_at", new Date().toISOString()),
+  ]);
+
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <header className="flex items-baseline justify-between">
@@ -66,6 +79,14 @@ export default async function SessionPage({
             >
               Learning plan
             </Link>
+            {(cardCount ?? 0) > 0 && (
+              <Link
+                href={`/sessions/${session.id}/review`}
+                className="hover:underline"
+              >
+                Review{dueCount ? ` (${dueCount} due)` : ""}
+              </Link>
+            )}
           </nav>
         )}
       </header>
@@ -73,6 +94,12 @@ export default async function SessionPage({
       <section className="mt-8">
         <Uploader sessionId={session.id} />
       </section>
+
+      {files?.some((f) => f.ingest_status === "done") && (
+        <p className="mt-4">
+          <CardsButton sessionId={session.id} hasCards={(cardCount ?? 0) > 0} />
+        </p>
+      )}
 
       <section className="mt-8">
         {files?.length ? (

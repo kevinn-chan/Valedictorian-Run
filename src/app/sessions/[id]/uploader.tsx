@@ -39,14 +39,25 @@ export function Uploader({ sessionId }: { sessionId: string }) {
         continue;
       }
 
-      const { error: dbErr } = await supabase.from("files").insert({
-        session_id: sessionId,
-        storage_path: path,
-        name: file.name,
-        mime: file.type || "application/octet-stream",
-        bytes: file.size,
-      });
-      if (dbErr) errs.push(`${file.name}: ${dbErr.message}`);
+      const { data: row, error: dbErr } = await supabase
+        .from("files")
+        .insert({
+          session_id: sessionId,
+          storage_path: path,
+          name: file.name,
+          mime: file.type || "application/octet-stream",
+          bytes: file.size,
+        })
+        .select("id")
+        .single();
+      if (dbErr || !row) {
+        errs.push(`${file.name}: ${dbErr?.message ?? "insert failed"}`);
+        continue;
+      }
+      // Kick off compilation; chip moves pending → processing → done on refresh
+      fetch(`/api/ingest/${row.id}`, { method: "POST" }).finally(() =>
+        router.refresh()
+      );
     }
 
     setBusy(null);

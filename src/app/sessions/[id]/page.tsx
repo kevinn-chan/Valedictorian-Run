@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Uploader } from "./uploader";
+import { CompileButton } from "./compile-button";
 
 const CHIP: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -51,6 +52,14 @@ export default async function SessionPage({
             {session.title}
           </h1>
         </div>
+        {files?.some((f) => f.ingest_status === "done") && (
+          <Link
+            href={`/sessions/${session.id}/wiki`}
+            className="text-sm font-medium hover:underline"
+          >
+            Corpus wiki →
+          </Link>
+        )}
       </header>
 
       <section className="mt-8">
@@ -73,6 +82,10 @@ export default async function SessionPage({
                 >
                   {f.ingest_status}
                 </span>
+                {(f.ingest_status === "pending" ||
+                  f.ingest_status === "error") && (
+                  <CompileButton fileId={f.id} />
+                )}
               </li>
             ))}
           </ul>

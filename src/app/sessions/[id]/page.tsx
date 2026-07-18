@@ -87,6 +87,12 @@ export default async function SessionPage({
                 Review{dueCount ? ` (${dueCount} due)` : ""}
               </Link>
             )}
+            <Link
+              href={`/sessions/${session.id}/chat`}
+              className="hover:underline"
+            >
+              Ask
+            </Link>
           </nav>
         )}
       </header>

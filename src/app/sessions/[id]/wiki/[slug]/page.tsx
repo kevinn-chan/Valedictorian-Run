@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import { createClient } from "@/lib/supabase/server";
+import { MarkdownView } from "./markdown-view";
 
 export default async function WikiPage({
   params,
@@ -36,9 +36,9 @@ export default async function WikiPage({
         </p>
       )}
 
-      <article className="prose prose-zinc mt-8 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
-        <ReactMarkdown>{page.markdown}</ReactMarkdown>
-      </article>
+      <div className="mt-8">
+        <MarkdownView markdown={page.markdown} />
+      </div>
     </main>
   );
 }

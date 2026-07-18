@@ -53,12 +53,20 @@ export default async function SessionPage({
           </h1>
         </div>
         {files?.some((f) => f.ingest_status === "done") && (
-          <Link
-            href={`/sessions/${session.id}/wiki`}
-            className="text-sm font-medium hover:underline"
-          >
-            Corpus wiki →
-          </Link>
+          <nav className="flex gap-4 text-sm font-medium">
+            <Link
+              href={`/sessions/${session.id}/wiki`}
+              className="hover:underline"
+            >
+              Corpus wiki
+            </Link>
+            <Link
+              href={`/sessions/${session.id}/plan`}
+              className="hover:underline"
+            >
+              Learning plan
+            </Link>
+          </nav>
         )}
       </header>
 

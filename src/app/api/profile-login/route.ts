@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       type: "magiclink",
       email,
     });
-    if (retry.data) {
+    if (retry.data?.properties?.hashed_token) {
       ({ error: verifyErr } = await supabase.auth.verifyOtp({
         type: "email",
         token_hash: retry.data.properties.hashed_token,

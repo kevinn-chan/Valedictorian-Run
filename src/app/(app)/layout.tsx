@@ -1,10 +1,16 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Signed-out visitors to "/" get the landing page with its own chrome
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) return <>{children}</>;
+
   return (
     <>
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">

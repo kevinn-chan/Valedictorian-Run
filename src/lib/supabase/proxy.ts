@@ -33,7 +33,8 @@ export async function updateSession(request: NextRequest) {
   const email = (data?.claims?.email as string | undefined)?.toLowerCase();
 
   const path = request.nextUrl.pathname;
-  const isPublic = PUBLIC_PATHS.some((p) => path.startsWith(p));
+  const isPublic =
+    path === "/" || PUBLIC_PATHS.some((p) => path.startsWith(p));
   if (isPublic) return supabaseResponse;
 
   if (!email) {

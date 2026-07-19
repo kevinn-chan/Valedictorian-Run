@@ -2,9 +2,13 @@ import Link from "next/link";
 import { BookOpen, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
+import { Landing } from "./landing";
 
 export default async function Home() {
   const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getClaims();
+  if (!auth?.claims) return <Landing />;
+
   const { data: sessions } = await supabase
     .from("sessions")
     .select("id, title, created_at, files(count)")

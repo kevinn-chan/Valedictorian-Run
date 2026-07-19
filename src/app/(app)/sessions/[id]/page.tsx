@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Uploader } from "./uploader";
 import { CompileButton } from "./compile-button";
 import { CardsButton } from "./cards-button";
+import { StatusPoller } from "./status-poller";
 
 const CHIP: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -72,6 +73,9 @@ export default async function SessionPage({
   ]);
 
   const compiled = files?.some((f) => f.ingest_status === "done");
+  const compiling = files?.some(
+    (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
+  );
 
   const tabs = [
     { href: "wiki", label: "Corpus wiki", Icon: BookOpen },
@@ -91,6 +95,7 @@ export default async function SessionPage({
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
+      {compiling && <StatusPoller />}
       <Link
         href="/"
         className="text-sm text-muted-foreground hover:text-foreground"

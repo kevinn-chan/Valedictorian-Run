@@ -1,50 +1,68 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
+import ReactMarkdown from "react-markdown";
 
 interface FileRef {
   id: string;
   name: string;
 }
 
-// Renders "[filename p.N]" citations as chips that open the PDF at that page.
-function withCitations(text: string, files: FileRef[]) {
-  const re = /\[([^\[\]]{2,80}?)\s+p\.?\s*(\d+)(?:\s*[-–]\s*\d+)?\]/g;
-  const out: React.ReactNode[] = [];
-  let last = 0;
-  let m: RegExpExecArray | null;
-  let key = 0;
-  while ((m = re.exec(text))) {
-    out.push(text.slice(last, m.index));
-    const [, name, page] = m;
+// Belt for the system prompt's no-LaTeX rule.
+function stripLatex(text: string) {
+  return text
+    .replace(/\$\$?([^$\n]+?)\$\$?/g, "$1")
+    .replace(/\\text\{([^}]*)\}/g, "$1");
+}
+
+// Turns "[filename p.N]" citations into markdown links so they render as
+// chips (via the `a` component below) that open the PDF at that page.
+// Tolerates multi-page labels ("p.28, 31") by linking the first page.
+function linkifyCitations(text: string, files: FileRef[]) {
+  const re =
+    /\[([^\[\]]{2,80}?)\s+p\.?\s*(\d+)(?:\s*[,–-]\s*\d+)*\]/g;
+  return text.replace(re, (match, name: string, page: string) => {
     const file = files.find(
       (f) =>
         f.name.toLowerCase() === name.toLowerCase() ||
-        f.name.toLowerCase().startsWith(name.toLowerCase().replace(/\.pdf$/, ""))
+        f.name
+          .toLowerCase()
+          .startsWith(name.toLowerCase().replace(/\.pdf$/, ""))
     );
-    out.push(
-      file ? (
-        <a
-          key={key++}
-          href={`/api/file/${file.id}#page=${page}`}
-          target="_blank"
-          rel="noreferrer"
-          className="mx-0.5 inline-block rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground hover:bg-secondary"
-        >
-          {name} p.{page}
-        </a>
-      ) : (
-        <span key={key++} className="text-xs text-muted-foreground">
-          [{name} p.{page}]
-        </span>
-      )
-    );
-    last = m.index + m[0].length;
-  }
-  out.push(text.slice(last));
-  return out;
+    if (!file) return match;
+    return `[${name} p.${page}](/api/file/${file.id}#page=${page})`;
+  });
+}
+
+function AssistantMessage({
+  text,
+  files,
+}: {
+  text: string;
+  files: FileRef[];
+}) {
+  return (
+    <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed [&_li]:my-0.5">
+      <ReactMarkdown
+        components={{
+          a: ({ href, children }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="mx-0.5 inline-block rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground no-underline transition hover:bg-secondary"
+            >
+              {children}
+            </a>
+          ),
+        }}
+      >
+        {linkifyCitations(stripLatex(text), files)}
+      </ReactMarkdown>
+    </div>
+  );
 }
 
 export function ChatClient({
@@ -65,7 +83,7 @@ export function ChatClient({
 
   return (
     <div className="mt-8 flex flex-col gap-4">
-      <div className="space-y-4">
+      <div className="space-y-5">
         {messages.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Ask anything about your materials. Every answer cites the page it
@@ -78,27 +96,27 @@ export function ChatClient({
             key={m.id}
             className={
               m.role === "user"
-                ? "ml-8 rounded-lg bg-accent p-3 text-sm"
-                : "mr-2 text-sm leading-relaxed"
+                ? "ml-12 rounded-xl bg-secondary px-4 py-3 text-sm"
+                : "text-sm"
             }
           >
             {m.parts.map((p, i) =>
               p.type === "text" ? (
-                <Fragment key={i}>
-                  {m.role === "assistant" ? (
-                    <div className="whitespace-pre-wrap">
-                      {withCitations(p.text, files)}
-                    </div>
-                  ) : (
-                    <span className="whitespace-pre-wrap">{p.text}</span>
-                  )}
-                </Fragment>
+                m.role === "assistant" ? (
+                  <AssistantMessage key={i} text={p.text} files={files} />
+                ) : (
+                  <span key={i} className="whitespace-pre-wrap">
+                    {p.text}
+                  </span>
+                )
               ) : null
             )}
           </div>
         ))}
         {busy && messages.at(-1)?.role === "user" && (
-          <p className="text-xs text-muted-foreground">Reading your materials…</p>
+          <p className="text-xs text-muted-foreground">
+            Reading your materials…
+          </p>
         )}
       </div>
 
@@ -115,12 +133,12 @@ export function ChatClient({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="e.g. Why does Go-back-N discard out-of-order frames?"
-          className="flex-1 rounded-md border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          className="h-10 flex-1 rounded-lg border bg-card px-3.5 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-ring/30"
         />
         <button
           type="submit"
           disabled={busy}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className="h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
         >
           Ask
         </button>

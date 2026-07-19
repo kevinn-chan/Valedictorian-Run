@@ -32,7 +32,7 @@ export default async function WikiPage({
       <h1 className="mt-1 text-xl font-semibold tracking-tight">{page.title}</h1>
       {pages && pages.length > 0 && (
         <p className="mt-1 text-xs text-muted-foreground">
-          pages {pages.join(", ")}
+          pages {Math.min(...pages)}–{Math.max(...pages)}
         </p>
       )}
 

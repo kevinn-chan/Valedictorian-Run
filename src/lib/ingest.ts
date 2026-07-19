@@ -23,7 +23,7 @@ const CompileSchema = z.object({
         summary: z
           .string()
           .describe(
-            "Markdown summary of this topic as covered in THIS file, concise but complete, with page references like (p. 12)"
+            "A study-ready markdown wiki page for this topic (200-500 words) with ## sections, page references like (p. 12), and plain-text formulas"
           ),
         pages: z.array(z.number().int()).describe("page numbers covering this topic"),
       })
@@ -46,12 +46,21 @@ const CompileSchema = z.object({
     ),
 });
 
-const COMPILE_PROMPT = `You are compiling a student's course file into a searchable corpus library.
-Transcribe and structure it faithfully:
-1. "chunks": cover every page in order (spans of 1-3 pages). Transcribe ALL text content — the corpus must contain every word of the document. Describe figures/diagrams briefly in [brackets].
-2. "topics": the distinct concepts taught, each with a study-ready markdown summary and page references.
-3. "digest": a markdown study digest of the entire file.
+const COMPILE_PROMPT = `You are compiling a student's course file into a corpus library they will study from INSTEAD of re-reading the original deck.
+1. "chunks": cover every page in order (spans of 1-3 pages). Transcribe ALL text content — every heading, bullet, definition, formula, and caption; the corpus must contain every word of the document. Describe figures/diagrams briefly in [brackets].
+2. "topics": the distinct concepts taught. Each summary is a STUDY-READY wiki page in markdown, roughly 200-500 words:
+   - open with a 1-2 sentence overview of what the topic is and why it matters
+   - "## Key ideas" — the mechanism/behaviour explained precisely, step by step where the source does
+   - "## Formulas & facts" — every formula, bound, and constant from the source with each symbol defined (omit the section only if the topic has none)
+   - "## Watch out" — misconceptions, edge cases, and likely exam traps grounded in the source
+   - cite pages inline like (p. 12) throughout
+3. "digest": a markdown study digest of the entire file: what it covers, how the topics build on each other, and what to master first.
+Write formulas in plain text/Unicode (e.g. U = 1/(1+2a), W = 2^(k-1)) — never LaTeX delimiters like $...$.
 Do not invent content that is not in the document.`;
+
+// Belt for the prompt's no-LaTeX rule: strip $...$ / $$...$$ delimiters the
+// model sneaks in anyway (wiki-facing markdown only; chunks stay verbatim).
+const stripLatex = (s: string) => s.replace(/\$\$?([^$\n]+?)\$\$?/g, "$1");
 
 export async function ingestFile(
   supabase: SupabaseClient,
@@ -123,7 +132,7 @@ export async function ingestFile(
       slug: `${fileTag}-digest`,
       kind: "file_digest",
       title: file.name,
-      markdown: object.digest,
+      markdown: stripLatex(object.digest),
       source_refs: { file_id: file.id },
     },
     ...object.topics.map((t) => ({
@@ -131,7 +140,7 @@ export async function ingestFile(
       slug: `${fileTag}-${t.slug}`,
       kind: "topic",
       title: t.title,
-      markdown: t.summary,
+      markdown: stripLatex(t.summary),
       source_refs: { file_id: file.id, pages: t.pages },
     })),
   ];

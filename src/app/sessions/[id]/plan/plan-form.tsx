@@ -46,19 +46,19 @@ export function PlanForm({
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           placeholder="Goal — e.g. confident on all ARQ protocols"
-          className="min-w-64 flex-1 rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700"
+          className="min-w-64 flex-1 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
         <input
           type="date"
           required
           value={examDate}
           onChange={(e) => setExamDate(e.target.value)}
-          className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700"
+          className="rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
           disabled={busy}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
         >
           {busy
             ? "Planning…"
@@ -68,7 +68,7 @@ export function PlanForm({
         </button>
       </div>
       {busy && (
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-muted-foreground">
           Building your schedule from the corpus wiki — up to a minute.
         </p>
       )}

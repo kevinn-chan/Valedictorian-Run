@@ -85,8 +85,8 @@ export function Uploader({ sessionId }: { sessionId: string }) {
         }}
         className={`cursor-pointer rounded-lg border border-dashed p-10 text-center text-sm transition-colors ${
           dragging
-            ? "border-zinc-900 bg-zinc-50 dark:border-zinc-100 dark:bg-zinc-900"
-            : "border-zinc-300 text-zinc-500 dark:border-zinc-700"
+            ? "border-primary bg-accent"
+            : "text-muted-foreground"
         }`}
       >
         {busy ? (

@@ -18,7 +18,7 @@ export default async function Home() {
         <form action="/auth/signout" method="post">
           <button
             type="submit"
-            className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
             Sign out
           </button>
@@ -30,18 +30,18 @@ export default async function Home() {
           name="title"
           required
           placeholder="New session — e.g. CS2040 Finals"
-          className="flex-1 rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700"
+          className="flex-1 rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
         >
           Create
         </button>
       </form>
 
       {sessions?.length ? (
-        <ul className="mt-8 divide-y divide-zinc-200 dark:divide-zinc-800">
+        <ul className="mt-8 divide-y divide-border">
           {sessions.map((s) => {
             const fileCount = (s.files as unknown as { count: number }[])?.[0]
               ?.count;
@@ -53,7 +53,7 @@ export default async function Home() {
                 >
                   {s.title}
                 </Link>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-muted-foreground">
                   {fileCount ?? 0} file{fileCount === 1 ? "" : "s"}
                 </span>
                 <form action={deleteSession}>
@@ -61,7 +61,7 @@ export default async function Home() {
                   <button
                     type="submit"
                     aria-label={`Delete ${s.title}`}
-                    className="text-xs text-zinc-400 hover:text-red-600"
+                    className="text-xs text-muted-foreground hover:text-red-600"
                   >
                     Delete
                   </button>
@@ -71,9 +71,9 @@ export default async function Home() {
           })}
         </ul>
       ) : (
-        <section className="mt-12 rounded-lg border border-dashed border-zinc-300 p-12 text-center dark:border-zinc-700">
+        <section className="mt-12 rounded-lg border border-dashed p-12 text-center">
           <h2 className="text-lg font-medium">No study sessions yet</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-zinc-500">
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
             A session holds the full corpus for one course — lecture PDFs,
             notes, cheatsheets. Create one above and drop your files in.
           </p>

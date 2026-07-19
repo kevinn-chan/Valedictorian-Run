@@ -58,7 +58,7 @@ export function ReviewClient({
         <h2 className="text-lg font-medium">
           {reviewed ? `Done — ${reviewed} cards reviewed.` : "Nothing due."}
         </h2>
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-2 text-sm text-muted-foreground">
           Come back when the next cards fall due.
         </p>
         <Link
@@ -73,22 +73,22 @@ export function ReviewClient({
 
   return (
     <div className="mt-10">
-      <p className="text-xs text-zinc-400">
+      <p className="text-xs text-muted-foreground">
         {queue.length} to go · space = flip · 1 again · 2 good · 3 easy
       </p>
 
       <button
         onClick={() => setFlipped((f) => !f)}
-        className="mt-4 w-full rounded-lg border border-zinc-300 p-10 text-left dark:border-zinc-700"
+        className="mt-4 w-full rounded-lg border p-10 text-left"
       >
         <p className="text-base leading-relaxed">{card.front}</p>
         {flipped && (
-          <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-800">
-            <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+          <div className="mt-6 border-t pt-6">
+            <p className="text-sm leading-relaxed text-foreground/90">
               {card.back}
             </p>
             {card.source_ref?.page && (
-              <p className="mt-3 text-xs text-zinc-400">
+              <p className="mt-3 text-xs text-muted-foreground">
                 p. {card.source_ref.page}
               </p>
             )}
@@ -108,14 +108,14 @@ export function ReviewClient({
             <button
               key={g}
               onClick={() => grade(g)}
-              className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+              className="flex-1 rounded-md border px-3 py-2 text-sm font-medium hover:bg-secondary"
             >
               {label}
             </button>
           ))}
         </div>
       ) : (
-        <p className="mt-4 text-center text-xs text-zinc-400">
+        <p className="mt-4 text-center text-xs text-muted-foreground">
           tap the card or press space to reveal
         </p>
       )}

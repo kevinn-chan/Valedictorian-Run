@@ -51,13 +51,26 @@ export default async function SessionPage({
       .lte("due_at", new Date().toISOString()),
   ]);
 
+  const [{ data: topicPages }, { data: topicCards }] = await Promise.all([
+    supabase
+      .from("wiki_pages")
+      .select("slug, title")
+      .eq("session_id", id)
+      .eq("kind", "topic")
+      .order("title"),
+    supabase
+      .from("cards")
+      .select("topic_slug, reps, lapses")
+      .eq("session_id", id),
+  ]);
+
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <header className="flex items-baseline justify-between">
         <div>
           <Link
             href="/"
-            className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
             ← All sessions
           </Link>
@@ -113,13 +126,46 @@ export default async function SessionPage({
         </p>
       )}
 
+      {topicPages && topicCards && topicCards.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Mastery by topic
+          </h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {topicPages.map((t) => {
+              const cs = topicCards.filter((c) => c.topic_slug === t.slug);
+              if (!cs.length) return null;
+              const reviewed = cs.some((c) => c.reps > 0 || c.lapses > 0);
+              const score = cs.filter((c) => c.reps >= 2).length / cs.length;
+              const cls = !reviewed
+                ? "bg-secondary text-muted-foreground"
+                : score < 0.4
+                  ? "bg-red-500/15 text-red-700 dark:text-red-300"
+                  : score < 0.8
+                    ? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                    : "bg-green-500/15 text-green-700 dark:text-green-300";
+              return (
+                <Link
+                  key={t.slug}
+                  href={`/sessions/${session.id}/wiki/${t.slug}`}
+                  className={`rounded-full px-3 py-1 text-xs font-medium hover:opacity-80 ${cls}`}
+                >
+                  {t.title}
+                  {reviewed ? ` · ${Math.round(score * 100)}%` : " · unreviewed"}
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       <section className="mt-8">
         {files?.length ? (
-          <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <ul className="divide-y divide-border">
             {files.map((f) => (
               <li key={f.id} className="flex items-center gap-3 py-3">
                 <span className="min-w-0 flex-1 truncate text-sm">{f.name}</span>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-muted-foreground">
                   {formatBytes(f.bytes)}
                 </span>
                 <span
@@ -137,7 +183,7 @@ export default async function SessionPage({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             No files yet. This session compiles into summaries, a plan, cue
             cards, and cited answers once you add materials.
           </p>

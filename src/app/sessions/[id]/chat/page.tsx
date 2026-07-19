@@ -50,7 +50,7 @@ export default async function ChatPage({
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <Link
         href={`/sessions/${id}`}
-        className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         ← {session.title}
       </Link>

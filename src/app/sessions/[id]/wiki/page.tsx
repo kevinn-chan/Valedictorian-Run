@@ -30,7 +30,7 @@ export default async function WikiIndex({
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <Link
         href={`/sessions/${id}`}
-        className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         ← {session.title}
       </Link>
@@ -38,7 +38,7 @@ export default async function WikiIndex({
 
       {topics.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-sm font-medium text-zinc-500">Topics</h2>
+          <h2 className="text-sm font-medium text-muted-foreground">Topics</h2>
           <ul className="mt-2 space-y-1">
             {topics.map((p) => (
               <li key={p.slug}>
@@ -56,7 +56,7 @@ export default async function WikiIndex({
 
       {digests.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-sm font-medium text-zinc-500">File digests</h2>
+          <h2 className="text-sm font-medium text-muted-foreground">File digests</h2>
           <ul className="mt-2 space-y-1">
             {digests.map((p) => (
               <li key={p.slug}>
@@ -73,7 +73,7 @@ export default async function WikiIndex({
       )}
 
       {!pages?.length && (
-        <p className="mt-8 text-sm text-zinc-500">
+        <p className="mt-8 text-sm text-muted-foreground">
           Nothing compiled yet — upload files in the session and they&apos;ll
           appear here as topics and digests.
         </p>

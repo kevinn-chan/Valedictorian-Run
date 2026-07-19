@@ -36,14 +36,14 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
   if (!questions) {
     return (
       <div className="mt-10">
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted-foreground">
           A fresh 10-question mock exam, generated from your materials every
           time — recall, mechanisms, and calculations, each answer cited.
         </p>
         <button
           onClick={start}
           disabled={busy}
-          className="mt-4 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
+          className="mt-4 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
         >
           {busy ? "Writing your exam…" : "Start mock exam"}
         </button>
@@ -58,7 +58,7 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
   return (
     <div className="mt-8 space-y-8">
       {submitted && (
-        <div className="rounded-lg border border-zinc-300 p-4 text-sm dark:border-zinc-700">
+        <div className="rounded-lg border p-4 text-sm">
           <span className="font-semibold">
             {score}/{questions.length}
           </span>{" "}
@@ -94,8 +94,8 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
                       : wrong
                         ? "border-red-600 bg-red-500/10"
                         : chosen
-                          ? "border-zinc-900 dark:border-zinc-100"
-                          : "border-zinc-200 hover:border-zinc-400 dark:border-zinc-800"
+                          ? "border-primary"
+                          : "hover:border-primary/60"
                   }`}
                 >
                   {opt}
@@ -104,9 +104,9 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
             })}
           </div>
           {submitted && (
-            <p className="mt-2 text-xs text-zinc-500">
+            <p className="mt-2 text-xs text-muted-foreground">
               {q.explanation}{" "}
-              <span className="text-zinc-400">(p. {q.page})</span>
+              <span className="text-muted-foreground">(p. {q.page})</span>
             </p>
           )}
         </div>
@@ -116,7 +116,7 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
         <button
           onClick={() => setSubmitted(true)}
           disabled={!allAnswered}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-40"
         >
           {allAnswered
             ? "Submit"

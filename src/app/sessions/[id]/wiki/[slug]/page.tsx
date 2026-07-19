@@ -25,13 +25,13 @@ export default async function WikiPage({
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <Link
         href={`/sessions/${id}/wiki`}
-        className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         ← Corpus wiki
       </Link>
       <h1 className="mt-1 text-xl font-semibold tracking-tight">{page.title}</h1>
       {pages && pages.length > 0 && (
-        <p className="mt-1 text-xs text-zinc-400">
+        <p className="mt-1 text-xs text-muted-foreground">
           pages {pages.join(", ")}
         </p>
       )}

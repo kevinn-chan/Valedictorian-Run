@@ -1,134 +1,45 @@
-"use client";
+import { getProfiles } from "@/lib/profiles";
 
-import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-
-function LoginForm() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
-    "idle"
-  );
-  const [message, setMessage] = useState("");
-  const searchParams = useSearchParams();
-  const urlError = searchParams.get("error");
-
-  // Passwords are the day-to-day path — magic links cost an email each
-  // (Supabase's built-in sender allows only a few per hour).
-  async function signInWithPassword(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus("sending");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      setStatus("error");
-      setMessage(error.message);
-    } else {
-      router.push("/");
-      router.refresh();
-    }
-  }
-
-  async function sendLink() {
-    if (!email) {
-      setStatus("error");
-      setMessage("Enter your email first.");
-      return;
-    }
-    setStatus("sending");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${location.origin}/auth/confirm` },
-    });
-    if (error) {
-      setStatus("error");
-      setMessage(error.message);
-    } else {
-      setStatus("sent");
-    }
-  }
+// Profile picker — the whole sign-in. Clicking a profile signs you in
+// server-side; no emails, no passwords. Private-by-link, by design.
+export default function LoginPage() {
+  const profiles = getProfiles();
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Valedictorian Run
+      <div className="w-full max-w-md text-center">
+        <p className="text-sm font-medium text-primary">Valedictorian Run</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+          Who&apos;s studying?
         </h1>
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-2 text-sm text-muted-foreground">
           Your course materials, compiled into a study system.
         </p>
 
-        {urlError === "not-allowed" && (
-          <p className="mt-6 rounded-md border p-3 text-sm">
-            This account isn&apos;t on the allowlist. Valedictorian Run is a
-            private study tool.
-          </p>
-        )}
-
-        {status === "sent" ? (
-          <p className="mt-6 rounded-md border p-3 text-sm">
-            Check your inbox — a sign-in link is on its way to{" "}
-            <span className="font-medium">{email}</span>.
-          </p>
-        ) : (
-          <form onSubmit={signInWithPassword} className="mt-8 space-y-3">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@university.edu"
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700"
-            />
-            <label htmlFor="password" className="text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700"
-            />
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
-            >
-              {status === "sending" ? "Signing in…" : "Sign in"}
-            </button>
-            <button
-              type="button"
-              onClick={sendLink}
-              className="w-full text-center text-sm text-zinc-500 underline hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
-              Email me a magic link instead
-            </button>
-            {status === "error" && (
-              <p className="text-sm text-red-600">{message}</p>
-            )}
-          </form>
-        )}
+        <div className="mt-10 flex items-start justify-center gap-6">
+          {profiles.map((p) => (
+            <form key={p.email} action="/api/profile-login" method="post">
+              <input type="hidden" name="email" value={p.email} />
+              <button
+                type="submit"
+                className="group flex w-28 flex-col items-center gap-3"
+              >
+                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-2xl font-semibold text-primary-foreground transition-transform group-hover:scale-105">
+                  {p.name.charAt(0).toUpperCase()}
+                </span>
+                <span className="text-sm font-medium group-hover:text-primary">
+                  {p.name}
+                </span>
+              </button>
+            </form>
+          ))}
+          {profiles.length === 0 && (
+            <p className="text-sm text-red-600">
+              No profiles configured — set the PROFILES env var.
+            </p>
+          )}
+        </div>
       </div>
     </main>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   );
 }

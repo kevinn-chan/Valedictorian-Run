@@ -31,7 +31,7 @@ export default async function PlanPage({
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <Link
         href={`/sessions/${id}`}
-        className="text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         ← {session.title}
       </Link>
@@ -49,11 +49,11 @@ export default async function PlanPage({
       </div>
 
       {plan ? (
-        <article className="prose prose-zinc mt-10 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
+        <article className="prose mt-10 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
           <ReactMarkdown>{plan.markdown}</ReactMarkdown>
         </article>
       ) : (
-        <p className="mt-10 text-sm text-zinc-500">
+        <p className="mt-10 text-sm text-muted-foreground">
           No plan yet. Set your exam date above and generate one — it schedules
           only the topics that actually exist in your corpus wiki.
         </p>

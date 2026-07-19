@@ -22,8 +22,8 @@ export function MarkdownView({ markdown }: { markdown: string }) {
                 onClick={() => setFull(label === "Full")}
                 className={`rounded-full px-3 py-1 ${
                   active
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {label}
@@ -32,7 +32,7 @@ export function MarkdownView({ markdown }: { markdown: string }) {
           })}
         </div>
       )}
-      <article className="prose prose-zinc mt-4 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
+      <article className="prose mt-4 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
         <ReactMarkdown>{full ? markdown : firstSection}</ReactMarkdown>
       </article>
     </div>

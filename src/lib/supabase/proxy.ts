@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getProfiles } from "@/lib/profiles";
 
 const PUBLIC_PATHS = ["/login", "/auth", "/api/keepalive", "/api/profile-login"];
 
@@ -41,12 +42,16 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Allowlist belt (the DB trigger is the braces)
-  const allowed = (process.env.ALLOWED_EMAILS ?? "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  if (!allowed.includes(email)) {
+  // Allowlist belt (the DB trigger is the braces). PROFILES emails are always
+  // allowed — one env var to keep in sync instead of two.
+  const allowed = new Set([
+    ...getProfiles().map((p) => p.email),
+    ...(process.env.ALLOWED_EMAILS ?? "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+  ]);
+  if (!allowed.has(email)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("error", "not-allowed");

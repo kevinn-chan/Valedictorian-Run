@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 // Supabase Free per-file cap
@@ -83,18 +84,19 @@ export function Uploader({ sessionId }: { sessionId: string }) {
           setDragging(false);
           handleFiles(e.dataTransfer.files);
         }}
-        className={`cursor-pointer rounded-lg border border-dashed p-10 text-center text-sm transition-colors ${
+        className={`cursor-pointer rounded-lg border border-dashed p-8 text-center text-sm transition-colors ${
           dragging
             ? "border-primary bg-accent"
-            : "text-muted-foreground"
+            : "text-muted-foreground hover:border-primary/40"
         }`}
       >
+        <Upload className="mx-auto mb-2 size-5" />
         {busy ? (
           <span>Uploading {busy}…</span>
         ) : (
           <span>
             Drop lecture PDFs, notes, or cheatsheets here — or{" "}
-            <span className="underline">browse</span>
+            <span className="font-medium text-primary">browse</span>
           </span>
         )}
         <input

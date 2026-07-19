@@ -16,7 +16,7 @@ export default function LoginPage() {
           Your course materials, compiled into a study system.
         </p>
 
-        <div className="mt-10 flex items-start justify-center gap-6">
+        <div className="mt-12 flex items-start justify-center gap-8">
           {profiles.map((p) => (
             <form key={p.email} action="/api/profile-login" method="post">
               <input type="hidden" name="email" value={p.email} />
@@ -24,10 +24,10 @@ export default function LoginPage() {
                 type="submit"
                 className="group flex w-28 flex-col items-center gap-3"
               >
-                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-2xl font-semibold text-primary-foreground transition-transform group-hover:scale-105">
+                <span className="flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-3xl font-semibold text-primary-foreground shadow-sm transition group-hover:scale-[1.04] group-hover:ring-4 group-hover:ring-primary/25">
                   {p.name.charAt(0).toUpperCase()}
                 </span>
-                <span className="text-sm font-medium group-hover:text-primary">
+                <span className="text-sm font-medium text-muted-foreground transition group-hover:text-foreground">
                   {p.name}
                 </span>
               </button>

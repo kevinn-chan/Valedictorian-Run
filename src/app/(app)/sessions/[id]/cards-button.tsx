@@ -36,7 +36,7 @@ export function CardsButton({
       <button
         onClick={run}
         disabled={busy}
-        className="text-sm text-muted-foreground underline hover:text-foreground disabled:opacity-50"
+        className="rounded-md border px-2.5 py-1 text-xs font-medium transition hover:border-primary/40 hover:text-primary disabled:opacity-50"
       >
         {busy ? "Generating cards…" : hasCards ? "Regenerate cards" : "Generate cue cards"}
       </button>

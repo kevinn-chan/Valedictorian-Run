@@ -19,7 +19,7 @@ export function CompileButton({ fileId }: { fileId: string }) {
     <button
       onClick={run}
       disabled={busy}
-      className="text-xs text-muted-foreground underline hover:text-foreground disabled:opacity-50"
+      className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
     >
       {busy ? "Compiling…" : "Compile"}
     </button>

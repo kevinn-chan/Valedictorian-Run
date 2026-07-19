@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { schedule, type Grade } from "@/lib/srs";
 
 interface Card {
   id: string;
@@ -9,6 +10,16 @@ interface Card {
   back: string;
   topic_slug: string | null;
   source_ref: { page?: number } | null;
+  interval_days: number;
+  ease: number;
+  reps: number;
+  lapses: number;
+}
+
+// "Good · 3d" style preview of where each grade sends the card
+function intervalLabel(card: Card, g: Grade) {
+  const next = schedule(card, g);
+  return next.interval_days === 0 ? "10m" : `${next.interval_days}d`;
 }
 
 export function ReviewClient({
@@ -100,17 +111,20 @@ export function ReviewClient({
         <div className="mt-4 flex gap-2">
           {(
             [
-              ["again", "Again (1)"],
-              ["good", "Good (2)"],
-              ["easy", "Easy (3)"],
+              ["again", "Again", "1"],
+              ["good", "Good", "2"],
+              ["easy", "Easy", "3"],
             ] as const
-          ).map(([g, label]) => (
+          ).map(([g, label, key]) => (
             <button
               key={g}
               onClick={() => grade(g)}
-              className="flex-1 rounded-md border px-3 py-2 text-sm font-medium hover:bg-secondary"
+              className="flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:bg-secondary"
             >
               {label}
+              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                {key} · {intervalLabel(card, g)}
+              </span>
             </button>
           ))}
         </div>

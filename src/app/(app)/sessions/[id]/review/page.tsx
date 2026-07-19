@@ -20,7 +20,7 @@ export default async function ReviewPage({
 
   const { data: due } = await supabase
     .from("cards")
-    .select("id, front, back, topic_slug, source_ref")
+    .select("id, front, back, topic_slug, source_ref, interval_days, ease, reps, lapses")
     .eq("session_id", id)
     .lte("due_at", new Date().toISOString())
     .order("due_at")

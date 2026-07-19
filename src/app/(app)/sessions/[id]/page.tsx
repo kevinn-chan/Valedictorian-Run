@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Layers,
   MessageCircleQuestion,
+  Presentation,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Uploader } from "./uploader";
@@ -90,6 +91,7 @@ export default async function SessionPage({
         ]
       : []),
     { href: "chat", label: "Ask", Icon: MessageCircleQuestion },
+    { href: "teach", label: "Teach back", Icon: Presentation },
     { href: "quiz", label: "Mock exam", Icon: GraduationCap },
   ];
 
@@ -141,9 +143,19 @@ export default async function SessionPage({
                 key={f.id}
                 className="flex items-center gap-3 border-b px-5 py-3 last:border-b-0"
               >
-                <span className="min-w-0 flex-1 truncate text-sm">
-                  {f.name}
-                </span>
+                {f.ingest_status === "done" ? (
+                  <Link
+                    href={`/sessions/${session.id}/wiki/${f.id.slice(0, 8)}-digest`}
+                    title="Open this file's digest"
+                    className="min-w-0 flex-1 truncate text-sm hover:text-primary"
+                  >
+                    {f.name}
+                  </Link>
+                ) : (
+                  <span className="min-w-0 flex-1 truncate text-sm">
+                    {f.name}
+                  </span>
+                )}
                 {f.pages && (
                   <span className="text-xs text-muted-foreground">
                     {f.pages} pages

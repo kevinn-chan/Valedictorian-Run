@@ -90,11 +90,11 @@ export function ReviewClient({
 
       <button
         onClick={() => setFlipped((f) => !f)}
-        className="mt-4 w-full rounded-lg border p-10 text-left"
+        className="card-soft card-lift mt-4 w-full cursor-pointer p-10 text-left"
       >
         <p className="text-base leading-relaxed">{card.front}</p>
         {flipped && (
-          <div className="mt-6 border-t pt-6">
+          <div className="animate-in fade-in slide-in-from-bottom-2 mt-6 border-t pt-6 duration-300">
             <p className="text-sm leading-relaxed text-foreground/90">
               {card.back}
             </p>

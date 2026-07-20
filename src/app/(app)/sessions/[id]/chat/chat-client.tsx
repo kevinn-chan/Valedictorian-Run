@@ -85,11 +85,28 @@ export function ChatClient({
     <div className="mt-8 flex flex-col gap-4">
       <div className="space-y-5">
         {messages.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Ask anything about your materials. Every answer cites the page it
-            came from — and if it isn&apos;t in your files, it says so instead
-            of guessing.
-          </p>
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Ask anything about your materials. Every answer cites the page it
+              came from — and if it isn&apos;t in your files, it says so
+              instead of guessing.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[
+                "Why does Go-back-N discard out-of-order frames?",
+                "What's the link utilization formula for Stop-and-Wait?",
+                "Compare Go-back-N and Selective-Reject in one paragraph",
+              ].map((q) => (
+                <button
+                  key={q}
+                  onClick={() => sendMessage({ text: q })}
+                  className="btn-squish rounded-full border bg-card px-3.5 py-1.5 text-left text-sm shadow-sm hover:border-primary/40 hover:text-primary"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
         {messages.map((m) => (
           <div
@@ -138,7 +155,7 @@ export function ChatClient({
         <button
           type="submit"
           disabled={busy}
-          className="h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+          className="h-10 btn-squish rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
         >
           Ask
         </button>

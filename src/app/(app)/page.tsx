@@ -3,11 +3,15 @@ import { BookOpen, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
+import { getProfiles } from "@/lib/profiles";
 
 export default async function Home() {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getClaims();
   if (!auth?.claims) return <Landing />;
+
+  const email = (auth.claims.email as string | undefined)?.toLowerCase();
+  const profileName = getProfiles().find((p) => p.email === email)?.name;
 
   const { data: sessions } = await supabase
     .from("sessions")
@@ -16,7 +20,9 @@ export default async function Home() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">Study sessions</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">
+        {profileName ? `Welcome back, ${profileName}` : "Study sessions"}
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
         One session per course — drop in materials, get a study system.
       </p>
@@ -30,14 +36,14 @@ export default async function Home() {
         />
         <button
           type="submit"
-          className="h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+          className="h-10 btn-squish rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
         >
           Create
         </button>
       </form>
 
       {sessions?.length ? (
-        <ul className="mt-8 overflow-hidden rounded-xl border bg-card">
+        <ul className="mt-8 card-soft overflow-hidden">
           {sessions.map((s) => {
             const fileCount =
               (s.files as unknown as { count: number }[])?.[0]?.count ?? 0;

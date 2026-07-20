@@ -58,7 +58,7 @@ export function TeachClient({
 
   return (
     <div className="mt-8 space-y-6">
-      <form onSubmit={submit} className="rounded-xl border bg-card p-5">
+      <form onSubmit={submit} className="card-soft p-5">
         <label htmlFor="topic" className="text-sm font-medium">
           Topic
         </label>
@@ -90,7 +90,7 @@ export function TeachClient({
           <button
             type="submit"
             disabled={busy || explanation.trim().length < 40}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+            className="btn-squish rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
           >
             {busy ? "Grading against your materials…" : "Grade my explanation"}
           </button>
@@ -104,7 +104,7 @@ export function TeachClient({
       </form>
 
       {grade && (
-        <section data-grade className="rounded-xl border bg-card p-5">
+        <section data-grade className="card-soft p-5">
           <div className="flex items-baseline gap-3">
             <span className={`text-3xl font-semibold ${scoreColor(grade.score)}`}>
               {grade.score}

@@ -114,7 +114,7 @@ export default async function SessionPage({
             <Link
               key={href}
               href={`/sessions/${session.id}/${href}`}
-              className="group inline-flex items-center gap-1.5 rounded-full border bg-card px-3.5 py-1.5 text-sm font-medium transition hover:border-primary/40 hover:text-primary"
+              className="group inline-flex items-center gap-1.5 btn-squish rounded-full border bg-card px-3.5 py-1.5 text-sm font-medium shadow-sm hover:border-primary/40 hover:text-primary"
             >
               <Icon className="size-3.5 text-muted-foreground transition group-hover:text-primary" />
               {label}
@@ -123,7 +123,7 @@ export default async function SessionPage({
         </nav>
       )}
 
-      <section className="mt-8 overflow-hidden rounded-xl border bg-card">
+      <section className="mt-8 card-soft overflow-hidden">
         <div className="flex items-center justify-between border-b px-5 py-3">
           <h2 className="text-sm font-medium">Materials</h2>
           {compiled && (
@@ -182,7 +182,7 @@ export default async function SessionPage({
       </section>
 
       {topicPages && topicCards && topicCards.length > 0 && (
-        <section className="mt-6 rounded-xl border bg-card p-5">
+        <section className="mt-6 card-soft p-5">
           <h2 className="text-sm font-medium">Mastery by topic</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             From your review history — open a topic to revisit its notes.

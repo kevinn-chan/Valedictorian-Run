@@ -43,7 +43,7 @@ export default async function WikiIndex({
       </p>
 
       {topics.length > 0 && (
-        <section className="mt-8 overflow-hidden rounded-xl border bg-card">
+        <section className="mt-8 card-soft overflow-hidden">
           <h2 className="border-b px-5 py-3 text-sm font-medium">Topics</h2>
           <ul>
             {topics.map((t) => {
@@ -73,7 +73,7 @@ export default async function WikiIndex({
       )}
 
       {digests.length > 0 && (
-        <section className="mt-6 overflow-hidden rounded-xl border bg-card">
+        <section className="mt-6 card-soft overflow-hidden">
           <h2 className="border-b px-5 py-3 text-sm font-medium">
             File digests
           </h2>

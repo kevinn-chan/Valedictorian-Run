@@ -95,7 +95,7 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
                         ? "border-red-600 bg-red-500/10"
                         : chosen
                           ? "border-primary"
-                          : "hover:border-primary/60"
+                          : "cursor-pointer transition hover:-translate-y-0.5 hover:border-primary/60"
                   }`}
                 >
                   {opt}

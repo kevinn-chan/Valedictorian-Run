@@ -44,6 +44,8 @@
    oklch(0.754 0.193 343.4). Warmth lives in the brand color and type,
    never in a cream surface: paper is a whisper of the brand hue. */
 :root {
+  --shadow-soft: 0 10px 36px -14px oklch(0.5 0.19 350 / 0.16);
+  --shadow-soft-hover: 0 16px 44px -14px oklch(0.5 0.19 350 / 0.24);
   --background: oklch(0.988 0.004 343);
   --foreground: oklch(0.23 0.015 343);
   --card: oklch(1 0 0);
@@ -75,6 +77,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --shadow-soft: 0 10px 32px -12px rgb(0 0 0 / 0.45);
+    --shadow-soft-hover: 0 16px 40px -12px rgb(0 0 0 / 0.6);
     --background: oklch(0.183 0.012 343);
     --foreground: oklch(0.93 0.008 343);
     --card: oklch(0.222 0.014 343);
@@ -101,6 +105,36 @@
     --sidebar-accent-foreground: oklch(0.9 0.02 343);
     --sidebar-border: oklch(1 0 0 / 12%);
     --sidebar-ring: oklch(0.74 0.15 343);
+  }
+}
+
+/* Landing-grade soft depth + tactile feedback for the whole app */
+@utility card-soft {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+@utility card-lift {
+  transition:
+    transform 200ms ease-out,
+    box-shadow 200ms ease-out;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft-hover);
+  }
+}
+@utility btn-squish {
+  cursor: pointer;
+  transition:
+    transform 180ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out;
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.96);
   }
 }
 

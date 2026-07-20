@@ -5,8 +5,8 @@ export default function Loading() {
       <div className="h-4 w-28 rounded bg-secondary" />
       <div className="mt-3 h-7 w-64 rounded bg-secondary" />
       <div className="mt-2 h-4 w-96 max-w-full rounded bg-secondary" />
-      <div className="mt-8 h-40 rounded-xl border bg-card" />
-      <div className="mt-6 h-24 rounded-xl border bg-card" />
+      <div className="mt-8 h-40 card-soft" />
+      <div className="mt-6 h-24 card-soft" />
     </main>
   );
 }

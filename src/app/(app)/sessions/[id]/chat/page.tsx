@@ -19,10 +19,15 @@ export default async function ChatPage({
     .single();
   if (!session) notFound();
 
-  const { data: files } = await supabase
-    .from("files")
-    .select("id, name")
-    .eq("session_id", id);
+  const [{ data: files }, { data: topics }] = await Promise.all([
+    supabase.from("files").select("id, name").eq("session_id", id),
+    supabase
+      .from("wiki_pages")
+      .select("title")
+      .eq("session_id", id)
+      .eq("kind", "topic")
+      .limit(3),
+  ]);
 
   const { data: chat } = await supabase
     .from("chats")
@@ -58,6 +63,7 @@ export default async function ChatPage({
       <ChatClient
         sessionId={id}
         files={files ?? []}
+        topics={(topics ?? []).map((t) => t.title)}
         initialMessages={initialMessages}
       />
     </main>

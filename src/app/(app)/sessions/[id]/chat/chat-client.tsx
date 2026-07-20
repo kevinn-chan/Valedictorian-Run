@@ -68,12 +68,19 @@ function AssistantMessage({
 export function ChatClient({
   sessionId,
   files,
+  topics,
   initialMessages,
 }: {
   sessionId: string;
   files: FileRef[];
+  topics: string[];
   initialMessages: UIMessage[];
 }) {
+  // Starter questions come from THIS session's compiled topics, so they're
+  // always answerable from the corpus.
+  const starters = topics.length
+    ? topics.map((t) => `Explain ${t} like I missed that lecture`)
+    : ["Summarize the most exam-critical ideas in these notes"];
   const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: `/api/chat/${sessionId}` }),
@@ -92,11 +99,7 @@ export function ChatClient({
               instead of guessing.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                "Why does Go-back-N discard out-of-order frames?",
-                "What's the link utilization formula for Stop-and-Wait?",
-                "Compare Go-back-N and Selective-Reject in one paragraph",
-              ].map((q) => (
+              {starters.map((q) => (
                 <button
                   key={q}
                   onClick={() => sendMessage({ text: q })}

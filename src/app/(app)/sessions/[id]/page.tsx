@@ -35,32 +35,27 @@ export default async function SessionPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: session } = await supabase
-    .from("sessions")
-    .select("id, title")
-    .eq("id", id)
-    .single();
-  if (!session) notFound();
-
-  const { data: files } = await supabase
-    .from("files")
-    .select("id, name, bytes, pages, ingest_status, created_at")
-    .eq("session_id", id)
-    .order("created_at", { ascending: false });
-
-  const [{ count: cardCount }, { count: dueCount }] = await Promise.all([
+  // One round-trip group instead of four sequential ones — none of these
+  // depend on each other's results, so they fan out in parallel.
+  const nowIso = new Date().toISOString();
+  const [
+    { data: session },
+    { data: files },
+    { count: dueCount },
+    { data: topicPages },
+    { data: topicCards },
+  ] = await Promise.all([
+    supabase.from("sessions").select("id, title").eq("id", id).single(),
     supabase
-      .from("cards")
-      .select("*", { count: "exact", head: true })
-      .eq("session_id", id),
+      .from("files")
+      .select("id, name, bytes, pages, ingest_status, created_at")
+      .eq("session_id", id)
+      .order("created_at", { ascending: false }),
     supabase
       .from("cards")
       .select("*", { count: "exact", head: true })
       .eq("session_id", id)
-      .lte("due_at", new Date().toISOString()),
-  ]);
-
-  const [{ data: topicPages }, { data: topicCards }] = await Promise.all([
+      .lte("due_at", nowIso),
     supabase
       .from("wiki_pages")
       .select("slug, title")
@@ -72,6 +67,10 @@ export default async function SessionPage({
       .select("topic_slug, reps, lapses")
       .eq("session_id", id),
   ]);
+  if (!session) notFound();
+
+  // Total card count is just the rows we already fetched — no extra query.
+  const cardCount = topicCards?.length ?? 0;
 
   const compiled = files?.some((f) => f.ingest_status === "done");
   const compiling = files?.some(

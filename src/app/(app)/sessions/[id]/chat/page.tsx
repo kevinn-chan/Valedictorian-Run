@@ -19,22 +19,22 @@ export default async function ChatPage({
     .single();
   if (!session) notFound();
 
-  const [{ data: files }, { data: topics }] = await Promise.all([
-    supabase.from("files").select("id, name").eq("session_id", id),
-    supabase
-      .from("wiki_pages")
-      .select("title")
-      .eq("session_id", id)
-      .eq("kind", "topic")
-      .limit(3),
-  ]);
-
-  const { data: chat } = await supabase
-    .from("chats")
-    .select("id")
-    .eq("session_id", id)
-    .limit(1)
-    .maybeSingle();
+  const [{ data: files }, { data: topics }, { data: chat }] =
+    await Promise.all([
+      supabase.from("files").select("id, name").eq("session_id", id),
+      supabase
+        .from("wiki_pages")
+        .select("title")
+        .eq("session_id", id)
+        .eq("kind", "topic")
+        .limit(3),
+      supabase
+        .from("chats")
+        .select("id")
+        .eq("session_id", id)
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
   let initialMessages: UIMessage[] = [];
   if (chat) {

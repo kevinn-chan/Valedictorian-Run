@@ -152,7 +152,7 @@ export function ChatClient({
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. Why does Go-back-N discard out-of-order frames?"
+          placeholder="Ask anything from your materials…"
           className="h-10 flex-1 rounded-lg border bg-card px-3.5 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-ring/30"
         />
         <button

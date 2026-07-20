@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Trash2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { DeleteButton } from "./delete-button";
 import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
@@ -70,13 +71,7 @@ export default async function Home() {
                 </div>
                 <form action={deleteSession}>
                   <input type="hidden" name="id" value={s.id} />
-                  <button
-                    type="submit"
-                    aria-label={`Delete ${s.title}`}
-                    className="rounded-md p-2 text-muted-foreground opacity-0 transition hover:bg-secondary hover:text-destructive group-hover:opacity-100"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
+                  <DeleteButton title={s.title} />
                 </form>
               </li>
             );

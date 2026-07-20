@@ -3,6 +3,26 @@
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
 
+/* App is committed-light: `dark:` utilities only apply under an explicit
+   `.dark` ancestor (never rendered), so they can't fire on OS dark mode and
+   paint white-on-blush. Restores the variant an earlier rewrite dropped. */
+@custom-variant dark (&:is(.dark *));
+
+/* Markdown (chat answers, wiki, plan, teach) uses brand tokens, not the
+   typography plugin's default grays/blue links. */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bullets: var(--primary);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-hr: var(--border);
+  --tw-prose-code: var(--foreground);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,68 +64,38 @@
    oklch(0.754 0.193 343.4). Warmth lives in the brand color and type,
    never in a cream surface: paper is a whisper of the brand hue. */
 :root {
+  color-scheme: light;
+  /* Committed warm-blush theme — one light palette shared with the landing.
+     Values are the landing's exact rose scale so app + marketing coincide. */
   --shadow-soft: 0 10px 36px -14px oklch(0.5 0.19 350 / 0.16);
   --shadow-soft-hover: 0 16px 44px -14px oklch(0.5 0.19 350 / 0.24);
-  --background: oklch(0.988 0.004 343);
-  --foreground: oklch(0.23 0.015 343);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.23 0.015 343);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.23 0.015 343);
-  --primary: oklch(0.54 0.17 343);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.962 0.007 343);
-  --secondary-foreground: oklch(0.3 0.02 343);
-  --muted: oklch(0.962 0.007 343);
-  --muted-foreground: oklch(0.49 0.018 343);
-  --accent: oklch(0.94 0.02 343);
-  --accent-foreground: oklch(0.3 0.05 343);
-  --destructive: oklch(0.55 0.21 27);
-  --border: oklch(0.912 0.009 343);
-  --input: oklch(0.912 0.009 343);
-  --ring: oklch(0.54 0.17 343);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.975 0.005 343);
-  --sidebar-foreground: oklch(0.23 0.015 343);
-  --sidebar-primary: oklch(0.54 0.17 343);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.02 343);
-  --sidebar-accent-foreground: oklch(0.3 0.05 343);
-  --sidebar-border: oklch(0.912 0.009 343);
-  --sidebar-ring: oklch(0.54 0.17 343);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --shadow-soft: 0 10px 32px -12px rgb(0 0 0 / 0.45);
-    --shadow-soft-hover: 0 16px 40px -12px rgb(0 0 0 / 0.6);
-    --background: oklch(0.183 0.012 343);
-    --foreground: oklch(0.93 0.008 343);
-    --card: oklch(0.222 0.014 343);
-    --card-foreground: oklch(0.93 0.008 343);
-    --popover: oklch(0.222 0.014 343);
-    --popover-foreground: oklch(0.93 0.008 343);
-    --primary: oklch(0.74 0.15 343);
-    --primary-foreground: oklch(0.17 0.03 343);
-    --secondary: oklch(0.252 0.014 343);
-    --secondary-foreground: oklch(0.88 0.01 343);
-    --muted: oklch(0.252 0.014 343);
-    --muted-foreground: oklch(0.69 0.015 343);
-    --accent: oklch(0.32 0.03 343);
-    --accent-foreground: oklch(0.9 0.02 343);
-    --destructive: oklch(0.7 0.19 22);
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.74 0.15 343);
-    --sidebar: oklch(0.222 0.014 343);
-    --sidebar-foreground: oklch(0.93 0.008 343);
-    --sidebar-primary: oklch(0.74 0.15 343);
-    --sidebar-primary-foreground: oklch(0.17 0.03 343);
-    --sidebar-accent: oklch(0.32 0.03 343);
-    --sidebar-accent-foreground: oklch(0.9 0.02 343);
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: oklch(0.74 0.15 343);
-  }
+  --background: #fff7f8;
+  --foreground: #4c0519;
+  --card: #ffffff;
+  --card-foreground: #4c0519;
+  --popover: #ffffff;
+  --popover-foreground: #4c0519;
+  --primary: #e11d48;
+  --primary-foreground: #ffffff;
+  --secondary: #ffe4e6;
+  --secondary-foreground: #9f1239;
+  --muted: #fdecee;
+  --muted-foreground: #8f5763;
+  --accent: #ffe4e6;
+  --accent-foreground: #9f1239;
+  --destructive: #dc2626;
+  --border: #fbd8dd;
+  --input: #fbd8dd;
+  --ring: #e11d48;
+  --radius: 0.75rem;
+  --sidebar: #fff1f2;
+  --sidebar-foreground: #4c0519;
+  --sidebar-primary: #e11d48;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ffe4e6;
+  --sidebar-accent-foreground: #9f1239;
+  --sidebar-border: #fbd8dd;
+  --sidebar-ring: #e11d48;
 }
 
 /* Landing-grade soft depth + tactile feedback for the whole app */

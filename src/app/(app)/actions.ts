@@ -22,6 +22,34 @@ export async function createSession(formData: FormData) {
   redirect(`/sessions/${session.id}`);
 }
 
+export async function renameSession(formData: FormData) {
+  const id = formData.get("id") as string;
+  const title = (formData.get("title") as string)?.trim();
+  if (!id || !title) return;
+
+  const supabase = await createClient();
+  // RLS ("own sessions") scopes the update to rows this user owns.
+  await supabase.from("sessions").update({ title }).eq("id", id);
+
+  revalidatePath("/");
+  revalidatePath(`/sessions/${id}`);
+}
+
+// Direct-call action from the quiz client after a completed attempt.
+export async function recordExam(
+  sessionId: string,
+  score: number,
+  total: number
+) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) return;
+  await supabase
+    .from("exam_results")
+    .insert({ session_id: sessionId, score, total });
+  revalidatePath(`/sessions/${sessionId}/quiz`);
+}
+
 export async function deleteSession(formData: FormData) {
   const id = formData.get("id") as string;
   if (!id) return;

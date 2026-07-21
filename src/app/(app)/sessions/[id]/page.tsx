@@ -13,6 +13,7 @@ import { Uploader } from "./uploader";
 import { CompileButton } from "./compile-button";
 import { CardsButton } from "./cards-button";
 import { StatusPoller } from "./status-poller";
+import { RenameTitle } from "./rename-title";
 
 const CHIP: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -103,9 +104,7 @@ export default async function SessionPage({
       >
         ← All sessions
       </Link>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-        {session.title}
-      </h1>
+      <RenameTitle id={session.id} title={session.title} />
 
       {compiled && (
         <nav className="mt-5 flex flex-wrap gap-1.5">
@@ -173,6 +172,9 @@ export default async function SessionPage({
                 {(f.ingest_status === "pending" ||
                   f.ingest_status === "error") && (
                   <CompileButton fileId={f.id} />
+                )}
+                {f.ingest_status === "done" && (
+                  <CompileButton fileId={f.id} recompile />
                 )}
               </li>
             ))}

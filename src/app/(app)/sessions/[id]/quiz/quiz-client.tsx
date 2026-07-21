@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { recordExam } from "../../../actions";
 
 interface Q {
   question: string;
@@ -10,7 +12,20 @@ interface Q {
   page: number;
 }
 
-export function QuizClient({ sessionId }: { sessionId: string }) {
+interface Attempt {
+  score: number;
+  total: number;
+  taken_at: string;
+}
+
+export function QuizClient({
+  sessionId,
+  history,
+}: {
+  sessionId: string;
+  history: Attempt[];
+}) {
+  const router = useRouter();
   const [questions, setQuestions] = useState<Q[] | null>(null);
   const [picked, setPicked] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -33,6 +48,10 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
     setQuestions(j.questions);
   }
 
+  const best = history.length
+    ? Math.max(...history.map((h) => h.score / h.total))
+    : 0;
+
   if (!questions) {
     return (
       <div className="mt-10">
@@ -48,6 +67,35 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
           {busy ? "Writing your exam…" : "Start mock exam"}
         </button>
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+        {history.length > 0 && (
+          <section className="mt-8 card-soft p-5">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-sm font-medium">Your attempts</h2>
+              <span className="text-xs text-muted-foreground">
+                best {Math.round(best * 100)}%
+              </span>
+            </div>
+            <ul className="mt-3 space-y-1.5">
+              {history.map((h, i) => (
+                <li
+                  key={i}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span className="font-medium">
+                    {h.score}/{h.total}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(h.taken_at).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     );
   }
@@ -114,7 +162,12 @@ export function QuizClient({ sessionId }: { sessionId: string }) {
 
       {!submitted && (
         <button
-          onClick={() => setSubmitted(true)}
+          onClick={() => {
+            setSubmitted(true);
+            recordExam(sessionId, score, questions.length).then(() =>
+              router.refresh()
+            );
+          }}
           disabled={!allAnswered}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-40"
         >

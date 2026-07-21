@@ -11,11 +11,17 @@ export default async function QuizPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: session } = await supabase
-    .from("sessions")
-    .select("id, title")
-    .eq("id", id)
-    .single();
+  // Both fan out together — history query no-ops gracefully (empty) until the
+  // 0002 migration is applied.
+  const [{ data: session }, { data: history }] = await Promise.all([
+    supabase.from("sessions").select("id, title").eq("id", id).single(),
+    supabase
+      .from("exam_results")
+      .select("score, total, taken_at")
+      .eq("session_id", id)
+      .order("taken_at", { ascending: false })
+      .limit(5),
+  ]);
   if (!session) notFound();
 
   return (
@@ -27,7 +33,7 @@ export default async function QuizPage({
         ← {session.title}
       </Link>
       <h1 className="mt-1 text-xl font-semibold tracking-tight">Mock exam</h1>
-      <QuizClient sessionId={id} />
+      <QuizClient sessionId={id} history={history ?? []} />
     </main>
   );
 }

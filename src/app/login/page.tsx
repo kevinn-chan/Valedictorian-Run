@@ -40,11 +40,11 @@ export default async function LoginPage({
           )}
 
           <div className="mt-8 flex items-start justify-center gap-8">
-            {profiles.map((p) => (
+            {profiles.map((p, i) => (
               <button
-                key={p.email}
-                name="email"
-                value={p.email}
+                key={i}
+                name="profile"
+                value={i}
                 type="submit"
                 className="group flex w-28 cursor-pointer flex-col items-center gap-3"
               >

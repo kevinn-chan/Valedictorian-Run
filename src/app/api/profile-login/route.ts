@@ -18,6 +18,10 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient();
+  // Clear any existing session first: a failed or different-profile sign-in must
+  // never silently leave you logged in as the previous profile. (scope: local —
+  // just drop this browser's session, no server round-trip.)
+  await supabase.auth.signOut({ scope: "local" });
   const { error } = await supabase.auth.signInWithPassword({
     email: profile.email,
     password,

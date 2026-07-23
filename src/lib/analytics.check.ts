@@ -1,6 +1,12 @@
 // Self-check for the analytics logic. Run: `node src/lib/analytics.check.ts`
 import assert from "node:assert";
-import { topicMastery, rankByWeakness, examTrend, type CardStat } from "./analytics.ts";
+import {
+  topicMastery,
+  rankByWeakness,
+  examTrend,
+  UNGROUPED_SLUG,
+  type CardStat,
+} from "./analytics.ts";
 
 const past = "2000-01-01T00:00:00.000Z"; // always "due"
 const future = "2999-01-01T00:00:00.000Z";
@@ -43,6 +49,24 @@ assert.equal(by.fresh.avgEase, null);
 
 const ranked = rankByWeakness(m).map((r) => r.slug);
 assert.deepEqual(ranked, ["weak", "fresh", "solid"], "weak → unstudied → solid");
+
+// Orphaned cards (topic_slug matches no topic, e.g. after a recompile drifted
+// the slugs) must be bucketed under Ungrouped, not silently dropped.
+const orphanCards: CardStat[] = [
+  card({ topic_slug: "gone-1", reps: 3 }),
+  card({ topic_slug: "gone-2", reps: 0, lapses: 1 }),
+  card({ topic_slug: null }),
+];
+const om = topicMastery(orphanCards, topics);
+const ung = om.find((r) => r.slug === UNGROUPED_SLUG);
+assert.ok(ung, "orphaned cards produce an Ungrouped bucket");
+assert.equal(ung.cards, 3, "all orphaned cards counted");
+assert.equal(ung.title, "Ungrouped");
+// No bucket when every card matches a topic.
+assert.ok(
+  !topicMastery(cards, topics).some((r) => r.slug === UNGROUPED_SLUG),
+  "no Ungrouped bucket when all cards match"
+);
 
 const trend = examTrend([
   { score: 5, total: 10, taken_at: "2026-01-02T00:00:00Z" },

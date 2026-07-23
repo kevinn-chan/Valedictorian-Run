@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { topicMastery, rankByWeakness, examTrend } from "@/lib/analytics";
+import { topicMastery, rankByWeakness, examTrend, UNGROUPED_SLUG } from "@/lib/analytics";
 
 const STATUS = {
   weak: { label: "Needs work", cls: "bg-red-500/15 text-red-700 dark:text-red-300", bar: "bg-red-500" },
@@ -138,7 +138,8 @@ export default async function AnalyticsPage({
           <ul className="mt-3 card-soft divide-y overflow-hidden">
             {rows.map((r) => {
               const s = STATUS[r.status];
-              const href = r.dueNow
+              // Ungrouped has no wiki page — send it to review, not a 404.
+              const href = r.dueNow || r.slug === UNGROUPED_SLUG
                 ? `/sessions/${id}/review`
                 : `/sessions/${id}/wiki/${r.slug}`;
               return (

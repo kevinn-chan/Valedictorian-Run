@@ -23,47 +23,65 @@ export type TopicMastery = {
   status: "weak" | "learning" | "solid" | "unstudied";
 };
 
+// Sentinel slug for cards whose topic_slug matches no current topic (e.g. after
+// a recompile regenerated the wiki with drifted slugs). Has no wiki page.
+export const UNGROUPED_SLUG = "__ungrouped__";
+
+// One topic's mastery row from its cards.
+function masteryRow(
+  slug: string,
+  title: string,
+  cs: CardStat[],
+  nowIso: string
+): TopicMastery {
+  const reviewed = cs.filter((c) => c.reps > 0 || c.lapses > 0);
+  const mastered = cs.filter((c) => c.reps >= 2).length;
+  const lapses = cs.reduce((n, c) => n + c.lapses, 0);
+  const dueNow = cs.filter((c) => c.due_at <= nowIso).length;
+  const avgEase = reviewed.length
+    ? reviewed.reduce((s, c) => s + c.ease, 0) / reviewed.length
+    : null;
+  const masteryPct = cs.length ? mastered / cs.length : 0;
+
+  let status: TopicMastery["status"];
+  if (!reviewed.length) status = "unstudied";
+  else if (masteryPct < 0.4 || (avgEase !== null && avgEase < 2.1))
+    status = "weak";
+  else if (masteryPct < 0.8) status = "learning";
+  else status = "solid";
+
+  return {
+    slug,
+    title,
+    cards: cs.length,
+    reviewed: reviewed.length,
+    mastered,
+    lapses,
+    avgEase,
+    dueNow,
+    masteryPct,
+    status,
+  };
+}
+
 // Per-topic mastery from the flashcard SRS state. "mastered" = a card answered
 // well at least twice in a row (reps ≥ 2); low ease or low mastery = struggling.
+// Cards whose topic_slug matches no topic (a recompile drifted the wiki slugs,
+// orphaning them) are bucketed under "Ungrouped" so Progress is never empty.
 export function topicMastery(
   cards: CardStat[],
   topics: TopicRef[],
   now: Date = new Date()
 ): TopicMastery[] {
   const nowIso = now.toISOString();
-  return topics
-    .map((t) => {
-      const cs = cards.filter((c) => c.topic_slug === t.slug);
-      const reviewed = cs.filter((c) => c.reps > 0 || c.lapses > 0);
-      const mastered = cs.filter((c) => c.reps >= 2).length;
-      const lapses = cs.reduce((n, c) => n + c.lapses, 0);
-      const dueNow = cs.filter((c) => c.due_at <= nowIso).length;
-      const avgEase = reviewed.length
-        ? reviewed.reduce((s, c) => s + c.ease, 0) / reviewed.length
-        : null;
-      const masteryPct = cs.length ? mastered / cs.length : 0;
-
-      let status: TopicMastery["status"];
-      if (!reviewed.length) status = "unstudied";
-      else if (masteryPct < 0.4 || (avgEase !== null && avgEase < 2.1))
-        status = "weak";
-      else if (masteryPct < 0.8) status = "learning";
-      else status = "solid";
-
-      return {
-        slug: t.slug,
-        title: t.title,
-        cards: cs.length,
-        reviewed: reviewed.length,
-        mastered,
-        lapses,
-        avgEase,
-        dueNow,
-        masteryPct,
-        status,
-      };
-    })
-    .filter((r) => r.cards > 0);
+  const known = new Set(topics.map((t) => t.slug));
+  const rows = topics.map((t) =>
+    masteryRow(t.slug, t.title, cards.filter((c) => c.topic_slug === t.slug), nowIso)
+  );
+  const orphaned = cards.filter((c) => !known.has(c.topic_slug ?? ""));
+  if (orphaned.length)
+    rows.push(masteryRow(UNGROUPED_SLUG, "Ungrouped", orphaned, nowIso));
+  return rows.filter((r) => r.cards > 0);
 }
 
 const STATUS_RANK = { weak: 0, learning: 1, unstudied: 2, solid: 3 } as const;

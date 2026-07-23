@@ -49,19 +49,27 @@ export async function selectFigureImages(
     .slice(0, max)
     .map((x) => x.f);
 
-  const parts: ImagePart[] = [];
-  for (const f of chosen) {
-    const { data: blob } = await supabase.storage
-      .from("session-files")
-      .download(f.storage_path as string);
-    if (!blob) continue;
-    parts.push({
-      type: "image",
-      image: new Uint8Array(await blob.arrayBuffer()),
-      mediaType: "image/webp",
-    });
-  }
-  return parts;
+  // Download the chosen figures in parallel — up to `max` independent round-trips
+  // to storage; running them sequentially added that latency to every question.
+  // Each is individually non-fatal: a bad figure never breaks the answer.
+  const parts = await Promise.all(
+    chosen.map(async (f): Promise<ImagePart | null> => {
+      try {
+        const { data: blob } = await supabase.storage
+          .from("session-files")
+          .download(f.storage_path as string);
+        if (!blob) return null;
+        return {
+          type: "image",
+          image: new Uint8Array(await blob.arrayBuffer()),
+          mediaType: "image/webp",
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+  return parts.filter((p): p is ImagePart => p !== null);
 }
 
 type ChunkRow = {

@@ -53,8 +53,19 @@ export async function POST(
       .join(" ") ?? "";
 
   let system: string;
+  let modelMessages: Awaited<ReturnType<typeof convertToModelMessages>>;
+  let images: Awaited<ReturnType<typeof selectFigureImages>>;
   try {
-    ({ system } = await buildContext(supabase, sessionId, question));
+    // Corpus read, figure selection, and message conversion are independent —
+    // overlap them instead of paying three sequential round-trips before streaming.
+    const [ctx, imgs, mm] = await Promise.all([
+      buildContext(supabase, sessionId, question),
+      selectFigureImages(supabase, sessionId, question),
+      convertToModelMessages(messages),
+    ]);
+    system = ctx.system;
+    images = imgs;
+    modelMessages = mm;
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "context failed" },
@@ -62,17 +73,25 @@ export async function POST(
     );
   }
 
-  const chatId = await getOrCreateChat(supabase, sessionId);
-  if (question) {
-    await supabase
-      .from("messages")
-      .insert({ chat_id: chatId, role: "user", content: question });
-  }
+  // Persist the turn off the critical path: create/find the chat and record the
+  // user message while the model streams; the id is awaited again at onFinish.
+  // Non-fatal — a history write must never break the answer.
+  const chatIdP = (async (): Promise<string | null> => {
+    try {
+      const chatId = await getOrCreateChat(supabase, sessionId);
+      if (question) {
+        await supabase
+          .from("messages")
+          .insert({ chat_id: chatId, role: "user", content: question });
+      }
+      return chatId;
+    } catch {
+      return null;
+    }
+  })();
 
   // Vision: attach the figure images relevant to this question so the model can
   // actually see the diagrams/graphs, still grounded in the same corpus.
-  const modelMessages = await convertToModelMessages(messages);
-  const images = await selectFigureImages(supabase, sessionId, question);
   if (images.length) {
     const last = modelMessages.at(-1);
     if (last?.role === "user") {
@@ -93,6 +112,8 @@ export async function POST(
 
   return result.toUIMessageStreamResponse({
     onFinish: async ({ responseMessage }) => {
+      const chatId = await chatIdP;
+      if (!chatId) return;
       const text = responseMessage.parts
         .filter((p): p is { type: "text"; text: string } => p.type === "text")
         .map((p) => p.text)

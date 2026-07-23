@@ -44,16 +44,23 @@ export async function POST(request: NextRequest) {
 
   const reader = demoReader();
   let system: string;
+  let modelMessages: Awaited<ReturnType<typeof convertToModelMessages>>;
+  let images: Awaited<ReturnType<typeof selectFigureImages>>;
   try {
-    // Service-role read of the demo corpus — no user session involved.
-    ({ system } = await buildContext(reader, DEMO_SESSION_ID, question));
+    // Corpus read (service-role, no user session), figure selection, and message
+    // conversion are independent — overlap them so time-to-first-token isn't the
+    // sum of three sequential round-trips.
+    const [ctx, imgs, mm] = await Promise.all([
+      buildContext(reader, DEMO_SESSION_ID, question),
+      selectFigureImages(reader, DEMO_SESSION_ID, question),
+      convertToModelMessages(messages),
+    ]);
+    system = ctx.system;
+    images = imgs;
+    modelMessages = mm;
   } catch {
     return NextResponse.json({ error: "demo unavailable" }, { status: 400 });
   }
-
-  // Vision: let the demo see its own figures (e.g. "explain the RStudio layout").
-  const modelMessages = await convertToModelMessages(messages);
-  const images = await selectFigureImages(reader, DEMO_SESSION_ID, question);
   if (images.length) {
     const last = modelMessages.at(-1);
     if (last?.role === "user") {

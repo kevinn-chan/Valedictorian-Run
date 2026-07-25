@@ -15,6 +15,19 @@ export type OcclusionRef = {
 
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
+// Convert a vision model's bounding box — Gemini's native [ymin, xmin, ymax, xmax]
+// normalized to 0..1000 — into our 0..1 {x,y,w,h} rect. Kept pure (no `ai`/server
+// imports) so occlusion.ts stays safe to import from the client bundle.
+export function boxToRect(box: number[]): { x: number; y: number; w: number; h: number } {
+  const [ymin, xmin, ymax, xmax] = box;
+  return {
+    x: clamp01(Math.min(xmin, xmax) / 1000),
+    y: clamp01(Math.min(ymin, ymax) / 1000),
+    w: clamp01(Math.abs(xmax - xmin) / 1000),
+    h: clamp01(Math.abs(ymax - ymin) / 1000),
+  };
+}
+
 export type OcclusionCardRow = {
   session_id: string;
   topic_slug: string | null;

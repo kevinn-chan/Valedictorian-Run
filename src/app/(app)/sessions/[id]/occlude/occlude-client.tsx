@@ -66,7 +66,35 @@ function Editor({
   const [draft, setDraft] = useState<Region | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
   const [msg, setMsg] = useState("");
+
+  // Ask the vision model to find labels on the figure and pre-fill boxes to review.
+  async function suggest() {
+    setSuggesting(true);
+    setMsg("");
+    try {
+      const res = await fetch(`/api/occlude/${sessionId}/suggest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ figureId: figure.id }),
+      });
+      const j = await res.json().catch(() => null);
+      if (!res.ok) {
+        setMsg(j?.error ?? "Couldn't suggest regions.");
+        return;
+      }
+      const found: Region[] = j?.regions ?? [];
+      if (!found.length) {
+        setMsg("No labels detected — draw boxes manually.");
+        return;
+      }
+      setRegions((r) => [...r, ...found]);
+      setMsg(`Suggested ${found.length} region${found.length === 1 ? "" : "s"} — review, edit, then save.`);
+    } finally {
+      setSuggesting(false);
+    }
+  }
 
   // Pointer position as a fraction of the image box, clamped to it.
   function frac(e: React.PointerEvent) {
@@ -139,9 +167,18 @@ function Editor({
         ← Pick another figure
       </button>
 
-      <p className="mt-3 text-xs text-muted-foreground">
-        Drag across a label to cover it. Each box needs an answer below.
-      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <p className="text-xs text-muted-foreground">
+          Drag across a label to cover it, or let the model find them.
+        </p>
+        <button
+          onClick={suggest}
+          disabled={suggesting}
+          className="rounded-md border px-2.5 py-1 text-xs font-medium transition hover:border-primary/40 hover:text-primary disabled:opacity-50"
+        >
+          {suggesting ? "Finding labels…" : "✨ Suggest regions"}
+        </button>
+      </div>
 
       <div className="relative mt-3 inline-block select-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}

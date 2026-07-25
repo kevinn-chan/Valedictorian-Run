@@ -9,7 +9,12 @@ interface Card {
   front: string;
   back: string;
   topic_slug: string | null;
-  source_ref: { page?: number } | null;
+  source_ref: {
+    page?: number;
+    kind?: string;
+    figureId?: string;
+    rect?: { x: number; y: number; w: number; h: number };
+  } | null;
   interval_days: number;
   ease: number;
   reps: number;
@@ -99,6 +104,33 @@ export function ReviewClient({
           </p>
         )}
         <p className="text-base leading-relaxed">{card.front}</p>
+
+        {card.source_ref?.kind === "occlusion" &&
+        card.source_ref.figureId &&
+        card.source_ref.rect ? (
+          // The masked region covers the label until you flip; then it turns into
+          // a ring so you can check the answer against the revealed figure.
+          <div className="relative mt-4 inline-block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/api/figure/${card.source_ref.figureId}`}
+              alt="occlusion figure"
+              className="max-h-[50vh] w-auto rounded-lg border"
+            />
+            <div
+              className={`absolute rounded ${
+                flipped ? "ring-2 ring-primary" : "bg-primary"
+              }`}
+              style={{
+                left: `${card.source_ref.rect.x * 100}%`,
+                top: `${card.source_ref.rect.y * 100}%`,
+                width: `${card.source_ref.rect.w * 100}%`,
+                height: `${card.source_ref.rect.h * 100}%`,
+              }}
+            />
+          </div>
+        ) : null}
+
         {flipped && (
           <div className="animate-in fade-in slide-in-from-bottom-2 mt-6 border-t pt-6 duration-300">
             <p className="text-sm leading-relaxed text-foreground/90">

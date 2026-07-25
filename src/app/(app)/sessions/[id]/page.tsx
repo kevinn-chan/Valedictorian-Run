@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   BookOpen,
   CalendarRange,
+  EyeOff,
   GraduationCap,
   Layers,
   MessageCircleQuestion,
@@ -46,6 +47,7 @@ export default async function SessionPage({
     { count: dueCount },
     { data: topicPages },
     { data: topicCards },
+    { count: figureCount },
   ] = await Promise.all([
     supabase.from("sessions").select("id, title").eq("id", id).single(),
     supabase
@@ -67,6 +69,10 @@ export default async function SessionPage({
     supabase
       .from("cards")
       .select("topic_slug, reps, lapses")
+      .eq("session_id", id),
+    supabase
+      .from("figures")
+      .select("*", { count: "exact", head: true })
       .eq("session_id", id),
   ]);
   if (!session) notFound();
@@ -94,6 +100,9 @@ export default async function SessionPage({
     { href: "chat", label: "Ask", Icon: MessageCircleQuestion },
     { href: "teach", label: "Teach back", Icon: Presentation },
     { href: "quiz", label: "Mock exam", Icon: GraduationCap },
+    ...((figureCount ?? 0) > 0
+      ? [{ href: "occlude", label: "Image occlusion", Icon: EyeOff }]
+      : []),
     ...((cardCount ?? 0) > 0
       ? [{ href: "analytics", label: "Progress", Icon: TrendingUp }]
       : []),

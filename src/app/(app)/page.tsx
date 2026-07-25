@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Search } from "lucide-react";
 import { DeleteButton } from "./delete-button";
 import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
@@ -45,6 +45,19 @@ export default async function Home() {
           </span>
           <span className="text-sm font-medium text-primary">Review all →</span>
         </Link>
+      ) : null}
+
+      {sessions?.length ? (
+        <form action="/search" method="get" className="mt-6">
+          <div className="flex items-center gap-2 rounded-xl border bg-card px-3.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring/30">
+            <Search className="size-4 shrink-0 text-muted-foreground" />
+            <input
+              name="q"
+              placeholder="Search across all sessions…"
+              className="h-11 flex-1 bg-transparent text-sm outline-none"
+            />
+          </div>
+        </form>
       ) : null}
 
       <form action={createSession} className="mt-8 flex gap-2">

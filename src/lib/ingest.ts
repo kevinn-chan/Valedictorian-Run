@@ -88,6 +88,52 @@ Do not invent content that is not in the document.`;
 // model sneaks in anyway (wiki-facing markdown only; chunks stay verbatim).
 const stripLatex = (s: string) => s.replace(/\$\$?([^$\n]+?)\$\$?/g, "$1");
 
+// Recompile-safe card re-tagging. On recompile the LLM redraws topic slugs, so a
+// card's stored topic_slug no longer matches any topic (it orphans → Ungrouped).
+// A card knows its source page (source_ref.page) and every new topic knows the
+// pages it covers, so remap by page overlap — most specific (fewest pages) wins.
+// Returns the new slug, or null to leave the card where it is.
+export function pickTopicSlug(
+  page: number | null | undefined,
+  topics: { slug: string; pages: number[] }[]
+): string | null {
+  if (page == null) return null;
+  const matches = topics.filter((t) => t.pages?.includes(page));
+  if (!matches.length) return null;
+  return matches.sort((a, b) => a.pages.length - b.pages.length)[0].slug;
+}
+
+// Re-point this file's cards at the just-inserted topics, preserving SRS state
+// (we UPDATE topic_slug only — never delete/regenerate, which would wipe reps).
+// The `${fileTag}-` prefix is stable across recompiles, so it identifies exactly
+// this file's cards even after the slug tail drifted.
+async function retagCards(
+  supabase: SupabaseClient,
+  sessionId: string,
+  fileTag: string,
+  topics: { slug: string; pages: number[] }[]
+): Promise<number> {
+  const { data: cards } = await supabase
+    .from("cards")
+    .select("id, topic_slug, source_ref")
+    .eq("session_id", sessionId)
+    .like("topic_slug", `${fileTag}-%`);
+  if (!cards?.length) return 0;
+
+  let moved = 0;
+  // ponytail: per-card UPDATE (≤ a few hundred cards/file); batch via an RPC only
+  // if a single file ever carries thousands of cards.
+  for (const c of cards) {
+    const page = (c.source_ref as { page?: number } | null)?.page;
+    const next = pickTopicSlug(page, topics);
+    if (next && next !== c.topic_slug) {
+      await supabase.from("cards").update({ topic_slug: next }).eq("id", c.id);
+      moved++;
+    }
+  }
+  return moved;
+}
+
 export async function ingestFile(
   supabase: SupabaseClient,
   fileId: string
@@ -172,6 +218,22 @@ export async function ingestFile(
   ];
   const { error: wikiErr } = await supabase.from("wiki_pages").insert(wikiRows);
   if (wikiErr) throw new Error(wikiErr.message);
+
+  // Re-point existing cards at the new topic slugs (non-fatal — an orphaned card
+  // just falls into the Ungrouped bucket, which analytics already handles).
+  try {
+    await retagCards(
+      supabase,
+      file.session_id,
+      fileTag,
+      object.topics.map((t) => ({ slug: `${fileTag}-${t.slug}`, pages: t.pages }))
+    );
+  } catch (e) {
+    console.error(
+      "card re-tag failed (cards unaffected):",
+      e instanceof Error ? e.message : e
+    );
+  }
 
   // ---- figures: rasterize the pages the model flagged, store, and link to a
   // topic. Wrapped whole: an enhancement that must never fail the text compile. ----

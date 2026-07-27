@@ -89,8 +89,10 @@ function Editor({
         setMsg("No labels detected — draw boxes manually.");
         return;
       }
-      setRegions((r) => [...r, ...found]);
-      setMsg(`Suggested ${found.length} region${found.length === 1 ? "" : "s"} — review, edit, then save.`);
+      const existingLabels = new Set(regions.map((r) => r.label.toLowerCase()));
+      const fresh = found.filter((r) => !existingLabels.has(r.label.toLowerCase()));
+      setRegions((r) => [...r, ...fresh]);
+      setMsg(`Suggested ${fresh.length} region${fresh.length === 1 ? "" : "s"} — review, edit, then save.`);
     } finally {
       setSuggesting(false);
     }

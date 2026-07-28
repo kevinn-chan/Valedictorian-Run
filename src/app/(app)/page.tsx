@@ -28,10 +28,10 @@ export default async function Home() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">
+      <h1 className="page-title">
         {profileName ? `Welcome back, ${profileName}` : "Study sessions"}
       </h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-2 text-sm text-muted-foreground">
         One session per course — drop in materials, get a study system.
       </p>
 
@@ -76,7 +76,7 @@ export default async function Home() {
       </form>
 
       {sessions?.length ? (
-        <ul className="mt-8 card-soft overflow-hidden">
+        <ul className="mt-8 space-y-1">
           {sessions.map((s) => {
             const fileCount =
               (s.files as unknown as { count: number }[])?.[0]?.count ?? 0;
@@ -87,7 +87,7 @@ export default async function Home() {
             return (
               <li
                 key={s.id}
-                className="group flex items-center gap-4 border-b px-5 py-4 last:border-b-0"
+                className="group flex items-center gap-4 rounded-lg px-4 py-3.5 transition-colors hover:bg-secondary/40"
               >
                 <div className="min-w-0 flex-1">
                   <Link

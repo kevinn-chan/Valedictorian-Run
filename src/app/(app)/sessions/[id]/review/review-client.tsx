@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
 import { schedule, type Grade } from "@/lib/srs";
 
 interface Card {
@@ -69,18 +70,23 @@ export function ReviewClient({
     return () => window.removeEventListener("keydown", onKey);
   }, [grade]);
 
+  const total = reviewed + queue.length;
+
   if (!card) {
     return (
-      <div className="mt-16 text-center">
-        <h2 className="text-lg font-medium">
-          {reviewed ? `Done — ${reviewed} cards reviewed.` : "Nothing due."}
+      <div className="mt-20 flex flex-col items-center text-center animate-slide-up">
+        <div className="flex size-16 items-center justify-center rounded-full bg-green-500/15">
+          <CheckCircle2 className="size-8 text-green-600" />
+        </div>
+        <h2 className="mt-4 text-xl font-semibold">
+          {reviewed ? `${reviewed} cards reviewed` : "Nothing due"}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Come back when the next cards fall due.
         </p>
         <Link
           href={sessionId ? `/sessions/${sessionId}` : "/"}
-          className="mt-6 inline-block text-sm font-medium hover:underline"
+          className="btn-squish mt-8 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-primary-foreground"
         >
           {sessionId ? "← Back to session" : "← Home"}
         </Link>
@@ -90,8 +96,20 @@ export function ReviewClient({
 
   return (
     <div className="mt-10">
+      <div className="mb-6">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{reviewed} reviewed</span>
+          <span>{queue.length} remaining</span>
+        </div>
+        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+            style={{ width: `${total > 0 ? (reviewed / total) * 100 : 0}%` }}
+          />
+        </div>
+      </div>
       <p className="text-xs text-muted-foreground">
-        {queue.length} to go · space = flip · 1 again · 2 good · 3 easy
+        space = flip · 1 again · 2 good · 3 easy
       </p>
 
       <button
@@ -146,25 +164,34 @@ export function ReviewClient({
       </button>
 
       {flipped ? (
-        <div className="mt-4 flex gap-2">
-          {(
-            [
-              ["again", "Again", "1"],
-              ["good", "Good", "2"],
-              ["easy", "Easy", "3"],
-            ] as const
-          ).map(([g, label, key]) => (
-            <button
-              key={g}
-              onClick={() => grade(g)}
-              className="flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:bg-secondary"
-            >
-              {label}
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                {key} · {intervalLabel(card, g)}
-              </span>
-            </button>
-          ))}
+        <div className="mt-4 flex gap-2 animate-slide-up">
+          <button
+            onClick={() => grade("again")}
+            className="btn-squish flex-1 rounded-lg border border-red-200 bg-red-500/10 px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-500/20"
+          >
+            Again
+            <span className="ml-1.5 text-xs font-normal text-red-600/70">
+              1 · {intervalLabel(card, "again")}
+            </span>
+          </button>
+          <button
+            onClick={() => grade("good")}
+            className="btn-squish flex-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary hover:bg-primary/20"
+          >
+            Good
+            <span className="ml-1.5 text-xs font-normal text-primary/70">
+              2 · {intervalLabel(card, "good")}
+            </span>
+          </button>
+          <button
+            onClick={() => grade("easy")}
+            className="btn-squish flex-1 rounded-lg border border-green-200 bg-green-500/10 px-3 py-2.5 text-sm font-medium text-green-700 hover:bg-green-500/20"
+          >
+            Easy
+            <span className="ml-1.5 text-xs font-normal text-green-600/70">
+              3 · {intervalLabel(card, "easy")}
+            </span>
+          </button>
         </div>
       ) : (
         <p className="mt-4 text-center text-xs text-muted-foreground">

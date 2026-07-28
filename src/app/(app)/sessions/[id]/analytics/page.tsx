@@ -4,21 +4,21 @@ import { createClient } from "@/lib/supabase/server";
 import { topicMastery, rankByWeakness, examTrend, UNGROUPED_SLUG } from "@/lib/analytics";
 
 const STATUS = {
-  weak: { label: "Needs work", cls: "bg-red-500/15 text-red-700 dark:text-red-300", bar: "bg-red-500" },
-  learning: { label: "Learning", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-300", bar: "bg-amber-500" },
-  solid: { label: "Solid", cls: "bg-green-500/15 text-green-700 dark:text-green-300", bar: "bg-green-500" },
+  weak: { label: "Needs work", cls: "bg-red-500/15 text-red-700", bar: "bg-red-500" },
+  learning: { label: "Learning", cls: "bg-amber-500/15 text-amber-700", bar: "bg-amber-500" },
+  solid: { label: "Solid", cls: "bg-green-500/15 text-green-700", bar: "bg-green-500" },
   unstudied: { label: "Not started", cls: "bg-secondary text-muted-foreground", bar: "bg-muted-foreground/40" },
 } as const;
 
 function Sparkline({ pts }: { pts: { pct: number }[] }) {
-  const w = 260, h = 44, pad = 4;
+  const w = 260, h = 64, pad = 6;
   const xs = pts.map((_, i) =>
     pts.length > 1 ? pad + (i * (w - 2 * pad)) / (pts.length - 1) : w / 2
   );
   const ys = pts.map((p) => h - pad - p.pct * (h - 2 * pad));
   const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(" ");
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-11 w-full max-w-[260px]" preserveAspectRatio="none">
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-16 w-full max-w-[260px]" preserveAspectRatio="none">
       <path d={line} fill="none" stroke="currentColor" strokeWidth="2" className="text-primary" strokeLinecap="round" strokeLinejoin="round" />
       {xs.map((x, i) => (
         <circle key={i} cx={x} cy={ys[i]} r="2.5" className="fill-primary" />
@@ -62,13 +62,6 @@ export default async function AnalyticsPage({
   const mastered = rows.reduce((n, r) => n + r.mastered, 0);
   const dueTotal = rows.reduce((n, r) => n + r.dueNow, 0);
 
-  const stats = [
-    { label: "Cards", value: totalCards },
-    { label: "Mastered", value: mastered },
-    { label: "Due now", value: dueTotal },
-    { label: "Exams taken", value: trend.count },
-  ];
-
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
       <Link
@@ -77,18 +70,28 @@ export default async function AnalyticsPage({
       >
         ← {session.title}
       </Link>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight">Progress</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h1 className="mt-1 page-title">Progress</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         Where you&apos;re strong, where to focus next — from your reviews and mock exams.
       </p>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="card-soft p-4">
-            <div className="text-2xl font-semibold tracking-tight">{s.value}</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{s.label}</div>
-          </div>
-        ))}
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-xl bg-card p-4 ring-1 ring-border">
+          <div className="text-3xl font-bold tracking-tight">{totalCards}</div>
+          <div className="mt-1 text-xs text-muted-foreground">Cards</div>
+        </div>
+        <div className="rounded-xl bg-green-500/10 p-4 ring-1 ring-green-200">
+          <div className="text-3xl font-bold tracking-tight text-green-700">{mastered}</div>
+          <div className="mt-1 text-xs text-green-700/70">Mastered</div>
+        </div>
+        <div className={`rounded-xl p-4 ring-1 ${dueTotal > 0 ? "bg-primary/10 ring-primary/20" : "bg-card ring-border"}`}>
+          <div className={`text-3xl font-bold tracking-tight ${dueTotal > 0 ? "text-primary" : ""}`}>{dueTotal}</div>
+          <div className={`mt-1 text-xs ${dueTotal > 0 ? "text-primary/70" : "text-muted-foreground"}`}>Due now</div>
+        </div>
+        <div className="rounded-xl bg-card p-4 ring-1 ring-border">
+          <div className="text-3xl font-bold tracking-tight">{trend.count}</div>
+          <div className="mt-1 text-xs text-muted-foreground">Exams taken</div>
+        </div>
       </div>
 
       <section className="mt-6 card-soft p-5">
@@ -105,7 +108,7 @@ export default async function AnalyticsPage({
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-semibold tracking-tight text-green-600 dark:text-green-400">
+                <div className="text-2xl font-semibold tracking-tight text-green-600">
                   {Math.round(trend.best * 100)}%
                 </div>
                 <div className="text-xs text-muted-foreground">best</div>
@@ -135,15 +138,14 @@ export default async function AnalyticsPage({
             to see per-topic mastery.
           </p>
         ) : (
-          <ul className="mt-3 card-soft divide-y overflow-hidden">
+          <ul className="mt-4 space-y-1">
             {rows.map((r) => {
               const s = STATUS[r.status];
-              // Ungrouped has no wiki page — send it to review, not a 404.
               const href = r.dueNow || r.slug === UNGROUPED_SLUG
                 ? `/sessions/${id}/review`
                 : `/sessions/${id}/wiki/${r.slug}`;
               return (
-                <li key={r.slug} className="px-5 py-3.5">
+                <li key={r.slug} className="rounded-lg px-4 py-3 transition-colors hover:bg-secondary/40">
                   <div className="flex items-center gap-3">
                     <Link href={href} className="min-w-0 flex-1 truncate text-sm font-medium hover:text-primary">
                       {r.title}
@@ -153,9 +155,9 @@ export default async function AnalyticsPage({
                     </span>
                   </div>
                   <div className="mt-2 flex items-center gap-3">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
                       <div
-                        className={`h-full rounded-full ${s.bar}`}
+                        className={`h-full rounded-full transition-all duration-500 ${s.bar}`}
                         style={{ width: `${Math.round(r.masteryPct * 100)}%` }}
                       />
                     </div>

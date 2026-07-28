@@ -18,10 +18,10 @@ import { StatusPoller } from "./status-poller";
 import { RenameTitle } from "./rename-title";
 
 const CHIP: Record<string, string> = {
-  pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
-  processing: "bg-blue-500/15 text-blue-700 dark:text-blue-300",
-  done: "bg-green-500/15 text-green-700 dark:text-green-300",
-  error: "bg-red-500/15 text-red-700 dark:text-red-300",
+  pending: "bg-amber-500/15 text-amber-700",
+  processing: "bg-blue-500/15 text-blue-700",
+  done: "bg-green-500/15 text-green-700",
+  error: "bg-red-500/15 text-red-700",
 };
 
 function formatBytes(n: number | null) {
@@ -85,27 +85,42 @@ export default async function SessionPage({
     (f) => f.ingest_status === "pending" || f.ingest_status === "processing"
   );
 
-  const tabs = [
-    { href: "wiki", label: "Corpus wiki", Icon: BookOpen },
-    { href: "plan", label: "Learning plan", Icon: CalendarRange },
-    ...((cardCount ?? 0) > 0
-      ? [
-          {
-            href: "review",
-            label: dueCount ? `Review · ${dueCount} due` : "Review",
-            Icon: Layers,
-          },
-        ]
-      : []),
-    { href: "chat", label: "Ask", Icon: MessageCircleQuestion },
-    { href: "teach", label: "Teach back", Icon: Presentation },
-    { href: "quiz", label: "Mock exam", Icon: GraduationCap },
-    ...((figureCount ?? 0) > 0
-      ? [{ href: "occlude", label: "Image occlusion", Icon: EyeOff }]
-      : []),
-    ...((cardCount ?? 0) > 0
-      ? [{ href: "analytics", label: "Progress", Icon: TrendingUp }]
-      : []),
+  const tabGroups = [
+    {
+      label: "Study",
+      tabs: [
+        { href: "wiki", label: "Wiki", Icon: BookOpen },
+        ...((cardCount ?? 0) > 0
+          ? [
+              {
+                href: "review",
+                label: dueCount ? `Review · ${dueCount}` : "Review",
+                Icon: Layers,
+              },
+            ]
+          : []),
+        { href: "chat", label: "Ask", Icon: MessageCircleQuestion },
+      ],
+    },
+    {
+      label: "Practice",
+      tabs: [
+        { href: "teach", label: "Teach", Icon: Presentation },
+        { href: "quiz", label: "Quiz", Icon: GraduationCap },
+        ...((figureCount ?? 0) > 0
+          ? [{ href: "occlude", label: "Occlusion", Icon: EyeOff }]
+          : []),
+      ],
+    },
+    {
+      label: "Track",
+      tabs: [
+        { href: "plan", label: "Plan", Icon: CalendarRange },
+        ...((cardCount ?? 0) > 0
+          ? [{ href: "analytics", label: "Progress", Icon: TrendingUp }]
+          : []),
+      ],
+    },
   ];
 
   return (
@@ -120,16 +135,23 @@ export default async function SessionPage({
       <RenameTitle id={session.id} title={session.title} />
 
       {compiled && (
-        <nav className="mt-5 flex flex-wrap gap-1.5">
-          {tabs.map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={`/sessions/${session.id}/${href}`}
-              className="group inline-flex items-center gap-1.5 btn-squish rounded-full border bg-card px-3.5 py-1.5 text-sm font-medium shadow-sm hover:border-primary/40 hover:text-primary"
-            >
-              <Icon className="size-3.5 text-muted-foreground transition group-hover:text-primary" />
-              {label}
-            </Link>
+        <nav className="mt-6 flex gap-6 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+          {tabGroups.map((group) => (
+            <div key={group.label} className="flex shrink-0 items-center gap-1">
+              <span className="mr-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                {group.label}
+              </span>
+              {group.tabs.map(({ href, label, Icon }) => (
+                <Link
+                  key={href}
+                  href={`/sessions/${session.id}/${href}`}
+                  className="group btn-squish inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-foreground/80 hover:bg-secondary hover:text-primary"
+                >
+                  <Icon className="size-4 text-muted-foreground transition group-hover:text-primary" />
+                  {label}
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
       )}
@@ -152,7 +174,7 @@ export default async function SessionPage({
             {files.map((f) => (
               <li
                 key={f.id}
-                className="flex items-center gap-3 border-b px-5 py-3 last:border-b-0"
+                className="flex items-center gap-3 border-b px-5 py-3 transition-colors last:border-b-0 hover:bg-secondary/30"
               >
                 {f.ingest_status === "done" ? (
                   <Link
@@ -196,12 +218,12 @@ export default async function SessionPage({
       </section>
 
       {topicPages && topicCards && topicCards.length > 0 && (
-        <section className="mt-6 card-soft p-5">
-          <h2 className="text-sm font-medium">Mastery by topic</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+        <section className="mt-8">
+          <h2 className="page-title text-base">Topic mastery</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
             From your review history — open a topic to revisit its notes.
           </p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-4 flex flex-wrap gap-2">
             {topicPages.map((t) => {
               const cs = topicCards.filter((c) => c.topic_slug === t.slug);
               if (!cs.length) return null;
@@ -210,10 +232,10 @@ export default async function SessionPage({
               const cls = !reviewed
                 ? "bg-secondary text-muted-foreground"
                 : score < 0.4
-                  ? "bg-red-500/15 text-red-700 dark:text-red-300"
+                  ? "bg-red-500/15 text-red-700"
                   : score < 0.8
-                    ? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
-                    : "bg-green-500/15 text-green-700 dark:text-green-300";
+                    ? "bg-amber-500/15 text-amber-700"
+                    : "bg-green-500/15 text-green-700";
               return (
                 <Link
                   key={t.slug}

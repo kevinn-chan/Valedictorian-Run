@@ -35,25 +35,25 @@ export default async function WikiIndex({
       >
         ← {session.title}
       </Link>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-        Corpus wiki
-      </h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h1 className="mt-1 page-title">Corpus wiki</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         Your materials, compiled into study notes — every page cited.
       </p>
 
       {topics.length > 0 && (
-        <section className="mt-8 card-soft overflow-hidden">
-          <h2 className="border-b px-5 py-3 text-sm font-medium">Topics</h2>
-          <ul>
+        <section className="mt-10">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Topics · {topics.length}
+          </h2>
+          <ul className="mt-3">
             {topics.map((t) => {
               const refPages = (t.source_refs as { pages?: number[] } | null)
                 ?.pages;
               return (
-                <li key={t.slug} className="border-b last:border-b-0">
+                <li key={t.slug}>
                   <Link
                     href={`/sessions/${id}/wiki/${t.slug}`}
-                    className="group flex items-center gap-3 px-5 py-3 transition hover:bg-secondary/50"
+                    className="group flex items-center gap-3 border-l-2 border-transparent px-4 py-2.5 transition hover:border-primary hover:bg-secondary/40"
                   >
                     <BookOpen className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
                     <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">
@@ -73,16 +73,16 @@ export default async function WikiIndex({
       )}
 
       {digests.length > 0 && (
-        <section className="mt-6 card-soft overflow-hidden">
-          <h2 className="border-b px-5 py-3 text-sm font-medium">
-            File digests
+        <section className="mt-10">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            File digests · {digests.length}
           </h2>
-          <ul>
+          <ul className="mt-3">
             {digests.map((p) => (
-              <li key={p.slug} className="border-b last:border-b-0">
+              <li key={p.slug}>
                 <Link
                   href={`/sessions/${id}/wiki/${p.slug}`}
-                  className="group flex items-center gap-3 px-5 py-3 transition hover:bg-secondary/50"
+                  className="group flex items-center gap-3 border-l-2 border-transparent px-4 py-2.5 transition hover:border-primary hover:bg-secondary/40"
                 >
                   <FileText className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
                   <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">

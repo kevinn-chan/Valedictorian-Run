@@ -35,11 +35,9 @@ export default async function PlanPage({
       >
         ← {session.title}
       </Link>
-      <h1 className="mt-1 text-xl font-semibold tracking-tight">
-        Learning plan
-      </h1>
+      <h1 className="mt-1 page-title">Learning plan</h1>
 
-      <div className="mt-6">
+      <div className="mt-8">
         <PlanForm
           sessionId={id}
           initialGoal={session.goal_text ?? ""}
@@ -49,7 +47,7 @@ export default async function PlanPage({
       </div>
 
       {plan ? (
-        <article className="prose mt-10 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
+        <article className="prose mt-10 max-w-none border-l-2 border-primary/20 pl-6 text-sm leading-relaxed [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
           <ReactMarkdown>{plan.markdown}</ReactMarkdown>
         </article>
       ) : (

@@ -116,15 +116,18 @@ export default async function SearchPage({
       )}
 
       {query && hits.length === 0 && (
-        <p className="mt-10 text-center text-sm text-muted-foreground">
-          Nothing found. Try different or fewer words.
-        </p>
+        <div className="mt-16 flex flex-col items-center text-center">
+          <Search className="size-10 text-muted-foreground/40" />
+          <p className="mt-3 text-sm text-muted-foreground">
+            Nothing found for &ldquo;{query}&rdquo;. Try different or fewer words.
+          </p>
+        </div>
       )}
 
       <div className="mt-4 space-y-6">
         {[...bySession.entries()].map(([sid, g]) => (
-          <section key={sid} className="card-soft overflow-hidden">
-            <div className="flex items-center justify-between border-b px-5 py-3">
+          <section key={sid} className="overflow-hidden rounded-xl border">
+            <div className="flex items-center justify-between bg-secondary/40 px-5 py-3">
               <Link
                 href={`/sessions/${sid}`}
                 className="text-sm font-medium hover:text-primary"

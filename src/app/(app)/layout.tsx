@@ -24,7 +24,7 @@ export default async function AppLayout({
           <form action="/auth/signout" method="post">
             <button
               type="submit"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="btn-squish rounded-lg px-3 py-1.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               Sign out
             </button>

@@ -41,7 +41,7 @@ export default async function DueTodayPage() {
       >
         ← Home
       </Link>
-      <h1 className="mt-1 text-xl font-semibold tracking-tight">Due today</h1>
+      <h1 className="mt-1 page-title">Due today</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Every card due across your sessions, in one queue.
       </p>

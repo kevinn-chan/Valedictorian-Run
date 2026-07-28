@@ -20,20 +20,20 @@ export function OccludeClient({
 
   if (!figure) {
     return (
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
         {figures.map((f) => (
           <button
             key={f.id}
             onClick={() => setFigure(f)}
-            className="card-soft card-lift overflow-hidden text-left"
+            className="card-soft card-lift group overflow-hidden text-left"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/api/figure/${f.id}`}
               alt={f.caption ?? `figure p.${f.page}`}
-              className="aspect-video w-full object-cover"
+              className="aspect-[4/3] w-full object-cover transition-transform duration-200 group-hover:scale-105"
             />
-            <p className="truncate px-3 py-2 text-xs text-muted-foreground">
+            <p className="truncate px-3 py-2.5 text-xs text-muted-foreground">
               p.{f.page} · {f.caption ?? "figure"}
             </p>
           </button>

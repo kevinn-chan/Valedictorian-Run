@@ -45,30 +45,30 @@ export default async function WikiPage({
   const next = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
+    <main className="mx-auto w-full max-w-prose px-6 py-16">
       <Link
         href={`/sessions/${id}/wiki`}
         className="text-sm text-muted-foreground hover:text-foreground"
       >
         ← Corpus wiki
       </Link>
-      <h1 className="mt-1 text-xl font-semibold tracking-tight">{page.title}</h1>
+      <h1 className="mt-2 page-title">{page.title}</h1>
       {pages && pages.length > 0 && (
         <p className="mt-1 text-xs text-muted-foreground">
-          pages {Math.min(...pages)}–{Math.max(...pages)}
+          Source pages {Math.min(...pages)}–{Math.max(...pages)}
         </p>
       )}
 
-      <div className="mt-8">
+      <div className="mt-10">
         <MarkdownView markdown={page.markdown} />
       </div>
 
       {figures && figures.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-sm font-semibold text-muted-foreground">
-            Figures from the source
+        <section className="mt-12">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Figures · {figures.length}
           </h2>
-          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-4 space-y-6">
             {figures.map((f) => (
               <figure
                 key={f.id}
@@ -85,10 +85,10 @@ export default async function WikiPage({
                     src={`/api/figure/${f.id}`}
                     alt={f.caption ?? `Figure on page ${f.page}`}
                     loading="lazy"
-                    className="max-h-96 w-full bg-white object-contain"
+                    className="max-h-[32rem] w-full bg-white object-contain"
                   />
                 </a>
-                <figcaption className="px-3 py-2 text-xs text-muted-foreground">
+                <figcaption className="px-4 py-2.5 text-xs text-muted-foreground">
                   {f.caption ? `${f.caption} · ` : ""}p.{f.page}
                 </figcaption>
               </figure>

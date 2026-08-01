@@ -32,20 +32,19 @@ export default async function Home() {
       // first figure per session wins; sessions with none get an initials panel.
       supabase
         .from("figures")
-        .select("id, session_id, page, caption")
+        .select("id, session_id, page")
         .order("page"),
     ]);
 
   const coverBySession = new Map<
     string,
-    { id: string; page: number; caption: string | null }
+    { id: string; page: number }
   >();
   for (const f of figures ?? [])
     if (!coverBySession.has(f.session_id))
       coverBySession.set(f.session_id, {
         id: f.id,
         page: f.page,
-        caption: f.caption,
       });
 
   const all = cards ?? [];
@@ -153,7 +152,6 @@ export default async function Home() {
                     <CardCover
                       figureId={cover?.id}
                       page={cover?.page}
-                      caption={cover?.caption}
                       title={s.title}
                     />
                     <div className="flex flex-1 flex-col p-5">

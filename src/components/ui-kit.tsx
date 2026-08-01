@@ -168,16 +168,21 @@ export function PageHeader({
  * pipeline already extracted from the user's own PDFs — the corpus is the
  * star, so no stock art. Falls back to a tinted panel carrying the title's
  * initials so a card with no figures keeps the same shape as one that has them.
+ *
+ * These are whole lecture-slide page images, not cropped photos: they are
+ * text-heavy and busy at thumbnail size. So the cover is treated as texture,
+ * not subject — anchored top (slide titles live there), softened, and capped
+ * with a scrim so the card's own title stays the loudest thing on the card.
+ * Captions are full sentences from the vision model and are never shown here;
+ * only the page number, which is short and actually useful.
  */
 export function CardCover({
   figureId,
-  caption,
   page,
   title,
   className = "h-28",
 }: {
   figureId?: string | null;
-  caption?: string | null;
   page?: number | null;
   title: string;
   className?: string;
@@ -209,12 +214,17 @@ export function CardCover({
         aria-hidden
         loading="lazy"
         decoding="async"
-        className="size-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
+        className="size-full object-cover object-top opacity-90 saturate-[0.85] transition-transform duration-300 group-hover:scale-[1.02]"
+      />
+      {/* Fade into the card body so a hard slice through slide text doesn't
+          read as a broken screenshot. */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent"
       />
       {page != null && (
-        <span className="absolute bottom-1.5 left-1.5 rounded-md border bg-card/90 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground backdrop-blur-sm">
+        <span className="absolute right-2 top-2 rounded-md bg-card/85 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground ring-1 ring-border backdrop-blur-sm">
           p.{page}
-          {caption ? ` · ${caption}` : ""}
         </span>
       )}
     </div>

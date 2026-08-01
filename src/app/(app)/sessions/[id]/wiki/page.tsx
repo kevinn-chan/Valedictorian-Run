@@ -25,7 +25,7 @@ export default async function WikiIndex({
       // card can show its own diagram rather than a generic icon.
       supabase
         .from("figures")
-        .select("id, topic_slug, page, caption")
+        .select("id, topic_slug, page")
         .eq("session_id", id)
         .order("page"),
     ]);
@@ -37,14 +37,13 @@ export default async function WikiIndex({
 
   const coverByTopic = new Map<
     string,
-    { id: string; page: number; caption: string | null }
+    { id: string; page: number }
   >();
   for (const f of figures ?? [])
     if (f.topic_slug && !coverByTopic.has(f.topic_slug))
       coverByTopic.set(f.topic_slug, {
         id: f.id,
         page: f.page,
-        caption: f.caption,
       });
 
   return (

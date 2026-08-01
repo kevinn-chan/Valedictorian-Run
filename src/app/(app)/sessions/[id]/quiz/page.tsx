@@ -30,7 +30,6 @@ export default async function QuizPage({
         back={`/sessions/${id}`}
         backLabel={session.title}
         title="Mock exam"
-        description="Ten fresh questions from your materials, every answer cited."
       />
       <QuizClient sessionId={id} history={history ?? []} />
     </main>

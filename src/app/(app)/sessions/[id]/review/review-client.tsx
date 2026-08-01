@@ -198,6 +198,7 @@ export function ReviewClient({
           </button>
         </div>
       ) : (
+        // Same height as the grade row so revealing never shifts the layout.
         <p className="mt-3 flex h-[42px] items-center justify-center text-xs text-muted-foreground">
           tap the card or press{" "}
           <kbd className="mx-1 rounded border bg-secondary px-1.5 py-0.5 font-sans text-[11px] font-medium">
@@ -206,9 +207,6 @@ export function ReviewClient({
           to reveal
         </p>
       )}
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        space = flip · 1 again · 2 good · 3 easy
-      </p>
     </div>
   );
 }

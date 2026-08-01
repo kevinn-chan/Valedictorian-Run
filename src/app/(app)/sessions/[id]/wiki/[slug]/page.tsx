@@ -57,7 +57,9 @@ export default async function WikiPage({
           <h1 className="mt-2 page-title">{page.title}</h1>
           {pages && pages.length > 0 && (
             <p className="mt-1.5 text-xs tabular-nums text-muted-foreground">
-              Source pages {Math.min(...pages)}–{Math.max(...pages)}
+              {Math.min(...pages) === Math.max(...pages)
+                ? `Source page ${Math.min(...pages)}`
+                : `Source pages ${Math.min(...pages)}–${Math.max(...pages)}`}
             </p>
           )}
 

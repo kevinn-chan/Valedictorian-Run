@@ -99,7 +99,7 @@ export default async function Home() {
               icon={<BookOpen className="size-4" />}
             />
             <StatTile
-              label="In progress"
+              label="Started"
               value={started}
               hint="cards seen"
               icon={<FileText className="size-4" />}

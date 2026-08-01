@@ -69,7 +69,9 @@ export default async function WikiIndex({
                         </span>
                         {refPages && refPages.length > 0 && (
                           <span className="mt-1 block text-xs tabular-nums text-muted-foreground">
-                            p. {Math.min(...refPages)}–{Math.max(...refPages)}
+                            p. {Math.min(...refPages)}
+                            {Math.min(...refPages) !== Math.max(...refPages) &&
+                              `–${Math.max(...refPages)}`}
                           </span>
                         )}
                       </span>

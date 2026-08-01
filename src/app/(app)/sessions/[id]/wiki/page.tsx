@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookOpen, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { PageHeader, ProgressBar } from "@/components/ui-kit";
+import { CardCover, PageHeader, ProgressBar } from "@/components/ui-kit";
 
 export default async function WikiIndex({
   params,
@@ -12,7 +12,7 @@ export default async function WikiIndex({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: session }, { data: pages }, { data: cards }] =
+  const [{ data: session }, { data: pages }, { data: cards }, { data: figures }] =
     await Promise.all([
       supabase.from("sessions").select("id, title").eq("id", id).single(),
       supabase
@@ -21,12 +21,31 @@ export default async function WikiIndex({
         .eq("session_id", id)
         .order("title"),
       supabase.from("cards").select("topic_slug, reps").eq("session_id", id),
+      // Figures are already tagged with the topic they belong to, so each topic
+      // card can show its own diagram rather than a generic icon.
+      supabase
+        .from("figures")
+        .select("id, topic_slug, page, caption")
+        .eq("session_id", id)
+        .order("page"),
     ]);
   if (!session) notFound();
 
   const digests = pages?.filter((p) => p.kind === "file_digest") ?? [];
   const topics = pages?.filter((p) => p.kind === "topic") ?? [];
   const all = cards ?? [];
+
+  const coverByTopic = new Map<
+    string,
+    { id: string; page: number; caption: string | null }
+  >();
+  for (const f of figures ?? [])
+    if (f.topic_slug && !coverByTopic.has(f.topic_slug))
+      coverByTopic.set(f.topic_slug, {
+        id: f.id,
+        page: f.page,
+        caption: f.caption,
+      });
 
   return (
     <main className="mx-auto w-full max-w-[1180px] px-5 py-8 sm:px-8 lg:py-10">
@@ -50,6 +69,7 @@ export default async function WikiIndex({
               const refPages = (t.source_refs as { pages?: number[] } | null)
                 ?.pages;
               const cs = all.filter((c) => c.topic_slug === t.slug);
+              const cover = coverByTopic.get(t.slug);
               const pct = cs.length
                 ? cs.filter((c) => c.reps >= 2).length / cs.length
                 : null;
@@ -57,38 +77,46 @@ export default async function WikiIndex({
                 <li key={t.slug}>
                   <Link
                     href={`/sessions/${id}/wiki/${t.slug}`}
-                    className="group flex h-full flex-col rounded-2xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
                   >
-                    <div className="flex items-start gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                        <BookOpen className="size-4" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="line-clamp-2 text-sm font-semibold leading-snug transition-colors group-hover:text-primary">
-                          {t.title}
+                    <CardCover
+                      className="h-24"
+                      figureId={cover?.id}
+                      page={cover?.page}
+                      title={t.title}
+                    />
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-start gap-3">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                          <BookOpen className="size-4" />
                         </span>
-                        {refPages && refPages.length > 0 && (
-                          <span className="mt-1 block text-xs tabular-nums text-muted-foreground">
-                            p. {Math.min(...refPages)}
-                            {Math.min(...refPages) !== Math.max(...refPages) &&
-                              `–${Math.max(...refPages)}`}
+                        <span className="min-w-0 flex-1">
+                          <span className="line-clamp-2 text-sm font-semibold leading-snug transition-colors group-hover:text-primary">
+                            {t.title}
                           </span>
-                        )}
-                      </span>
-                    </div>
-                    {pct !== null && (
-                      <div className="mt-auto pt-4">
-                        <div className="flex items-baseline justify-between text-xs">
-                          <span className="text-muted-foreground">
-                            {cs.length} card{cs.length === 1 ? "" : "s"}
-                          </span>
-                          <span className="font-medium tabular-nums">
-                            {Math.round(pct * 100)}%
-                          </span>
-                        </div>
-                        <ProgressBar value={pct} className="mt-1.5" />
+                          {refPages && refPages.length > 0 && (
+                            <span className="mt-1 block text-xs tabular-nums text-muted-foreground">
+                              p. {Math.min(...refPages)}
+                              {Math.min(...refPages) !== Math.max(...refPages) &&
+                                `–${Math.max(...refPages)}`}
+                            </span>
+                          )}
+                        </span>
                       </div>
-                    )}
+                      {pct !== null && (
+                        <div className="mt-auto pt-4">
+                          <div className="flex items-baseline justify-between text-xs">
+                            <span className="text-muted-foreground">
+                              {cs.length} card{cs.length === 1 ? "" : "s"}
+                            </span>
+                            <span className="font-medium tabular-nums">
+                              {Math.round(pct * 100)}%
+                            </span>
+                          </div>
+                          <ProgressBar value={pct} className="mt-1.5" />
+                        </div>
+                      )}
+                    </div>
                   </Link>
                 </li>
               );

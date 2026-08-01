@@ -14,7 +14,7 @@ export default async function LoginPage({
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-md text-center">
-        <p className="text-sm font-semibold text-rose-600">
+        <p className="text-sm font-semibold text-indigo-600">
           <span aria-hidden>●</span> Valedictorian Run
         </p>
 

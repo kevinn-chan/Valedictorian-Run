@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
 import { getProfiles } from "@/lib/profiles";
-import { ProgressBar, ProgressRing, StatTile } from "@/components/ui-kit";
+import { CardCover, ProgressBar, ProgressRing, StatTile } from "@/components/ui-kit";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -16,7 +16,7 @@ export default async function Home() {
   const profileName = getProfiles().find((p) => p.email === email)?.name;
 
   const now = new Date().toISOString();
-  const [{ data: sessions }, { data: cards }, { count: topicCount }] =
+  const [{ data: sessions }, { data: cards }, { count: topicCount }, { data: figures }] =
     await Promise.all([
       supabase
         .from("sessions")
@@ -28,7 +28,25 @@ export default async function Home() {
         .from("wiki_pages")
         .select("*", { count: "exact", head: true })
         .eq("kind", "topic"),
+      // Card covers come from the user's own extracted diagrams. One read,
+      // first figure per session wins; sessions with none get an initials panel.
+      supabase
+        .from("figures")
+        .select("id, session_id, page, caption")
+        .order("page"),
     ]);
+
+  const coverBySession = new Map<
+    string,
+    { id: string; page: number; caption: string | null }
+  >();
+  for (const f of figures ?? [])
+    if (!coverBySession.has(f.session_id))
+      coverBySession.set(f.session_id, {
+        id: f.id,
+        page: f.page,
+        caption: f.caption,
+      });
 
   const all = cards ?? [];
   const dueCount = all.filter((c) => c.due_at <= now).length;
@@ -121,6 +139,7 @@ export default async function Home() {
                 const fileCount =
                   (s.files as unknown as { count: number }[])?.[0]?.count ?? 0;
                 const st = stats(s.id);
+                const cover = coverBySession.get(s.id);
                 const created = new Date(s.created_at).toLocaleDateString(
                   undefined,
                   { month: "short", day: "numeric" }
@@ -128,9 +147,16 @@ export default async function Home() {
                 return (
                   <li
                     key={s.id}
-                    className="group relative flex flex-col rounded-2xl border bg-card p-5 transition-shadow hover:shadow-[var(--shadow-soft-hover)]"
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-shadow hover:shadow-[var(--shadow-soft-hover)]"
                     style={{ boxShadow: "var(--shadow-soft)" }}
                   >
+                    <CardCover
+                      figureId={cover?.id}
+                      page={cover?.page}
+                      caption={cover?.caption}
+                      title={s.title}
+                    />
+                    <div className="flex flex-1 flex-col p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <Link
@@ -153,7 +179,7 @@ export default async function Home() {
                     </div>
 
                     {st.cards > 0 && (
-                      <div className="mt-5">
+                      <div className="mb-5 mt-4">
                         <div className="flex items-baseline justify-between text-xs">
                           <span className="font-medium text-muted-foreground">
                             Mastery
@@ -166,7 +192,7 @@ export default async function Home() {
                       </div>
                     )}
 
-                    <div className="mt-5 flex items-center justify-between border-t pt-3.5">
+                    <div className="mt-auto flex items-center justify-between border-t pt-3.5">
                       <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
                         {st.due > 0 ? "Review now" : "Open session"}
                         <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -175,6 +201,7 @@ export default async function Home() {
                         <input type="hidden" name="id" value={s.id} />
                         <DeleteButton title={s.title} />
                       </form>
+                    </div>
                     </div>
                   </li>
                 );

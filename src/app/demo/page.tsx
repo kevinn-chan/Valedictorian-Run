@@ -62,9 +62,12 @@ export default async function DemoPage() {
           </p>
         </section>
 
+        {/* min-w-0 on the children: grid items default to min-width:auto, and the
+            truncating topic titles push min-content past the viewport on mobile,
+            so without this the whole page scrolls sideways at 375px. */}
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
           {/* Compiled wiki */}
-          <section>
+          <section className="min-w-0">
             <h2 className="text-sm font-semibold text-indigo-950">
               The compiled wiki
             </h2>
@@ -112,7 +115,7 @@ export default async function DemoPage() {
           </section>
 
           {/* Live chat */}
-          <section>
+          <section className="min-w-0">
             <h2 className="text-sm font-semibold text-indigo-950">Ask the corpus</h2>
             <p className="mt-1 text-xs text-indigo-900/60">
               Grounded, cited answers — or an honest &ldquo;that isn&rsquo;t in the

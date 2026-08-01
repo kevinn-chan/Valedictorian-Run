@@ -163,6 +163,64 @@ export function PageHeader({
   );
 }
 
+/**
+ * Cover image for a session or topic card, drawn from a figure the ingest
+ * pipeline already extracted from the user's own PDFs — the corpus is the
+ * star, so no stock art. Falls back to a tinted panel carrying the title's
+ * initials so a card with no figures keeps the same shape as one that has them.
+ */
+export function CardCover({
+  figureId,
+  caption,
+  page,
+  title,
+  className = "h-28",
+}: {
+  figureId?: string | null;
+  caption?: string | null;
+  page?: number | null;
+  title: string;
+  className?: string;
+}) {
+  if (!figureId) {
+    const initials = title
+      .split(/\s+/)
+      .filter((w) => /[a-z0-9]/i.test(w))
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("");
+    return (
+      <div
+        aria-hidden
+        className={`${className} flex items-center justify-center border-b bg-secondary/60`}
+      >
+        <span className="text-xl font-semibold tracking-tight text-primary/45">
+          {initials || "·"}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className={`${className} relative overflow-hidden border-b bg-white`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/api/figure/${figureId}`}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        decoding="async"
+        className="size-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
+      />
+      {page != null && (
+        <span className="absolute bottom-1.5 left-1.5 rounded-md border bg-card/90 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground backdrop-blur-sm">
+          p.{page}
+          {caption ? ` · ${caption}` : ""}
+        </span>
+      )}
+    </div>
+  );
+}
+
 /** A titled region. Replaces the ad-hoc `card-soft` wrappers page to page. */
 export function Panel({
   title,

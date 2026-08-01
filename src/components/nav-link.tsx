@@ -25,6 +25,11 @@ export function NavLink({
   return (
     <Link
       href={href}
+      // The rail is on every screen, so leaving prefetch on means every page
+      // view quietly triggers a full SSR render of every other nav target —
+      // each one several Supabase queries. That was enough to make the free
+      // tier answer 503. Both loading.tsx boundaries cover the wait instead.
+      prefetch={false}
       aria-current={active ? "page" : undefined}
       className={`${className} ${active ? activeClassName : idleClassName}`}
     >

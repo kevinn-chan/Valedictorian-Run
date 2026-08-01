@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui-kit";
 import { OccludeClient } from "./occlude-client";
 
 export default async function OccludePage({
@@ -25,20 +25,13 @@ export default async function OccludePage({
     .order("page");
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-12">
-      <Link
-        href={`/sessions/${id}`}
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
-        ← {session.title}
-      </Link>
-      <h1 className="mt-1 text-xl font-semibold tracking-tight">
-        Image occlusion
-      </h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Cover a label on a figure and recall it from memory. Each box you draw
-        becomes a spaced-repetition card in this session&apos;s review queue.
-      </p>
+    <main className="mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 lg:py-12">
+      <PageHeader
+        back={`/sessions/${id}`}
+        backLabel={session.title}
+        title="Image occlusion"
+        description="Cover a label on a figure and recall it from memory. Each box you draw becomes a spaced-repetition card in this session's review queue."
+      />
 
       {figures?.length ? (
         <OccludeClient sessionId={id} figures={figures} />

@@ -95,33 +95,37 @@ export function ReviewClient({
   }
 
   return (
-    <div className="mt-10">
-      <div className="mb-6">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+    <div>
+      <div className="mb-5">
+        <div className="flex items-center justify-between text-xs tabular-nums text-muted-foreground">
           <span>{reviewed} reviewed</span>
           <span>{queue.length} remaining</span>
         </div>
         <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
-            style={{ width: `${total > 0 ? (reviewed / total) * 100 : 0}%` }}
+            className="h-full w-full rounded-full bg-primary"
+            style={{
+              clipPath: `inset(0 ${100 - (total > 0 ? (reviewed / total) * 100 : 0)}% 0 0 round 999px)`,
+              transition: "clip-path 500ms cubic-bezier(0.23,1,0.32,1)",
+            }}
           />
         </div>
       </div>
-      <p className="text-xs text-muted-foreground">
-        space = flip · 1 again · 2 good · 3 easy
-      </p>
 
+      {/* min-height keeps the grade row still when the answer expands — the
+          buttons must not slide out from under the cursor mid-review. */}
       <button
         onClick={() => setFlipped((f) => !f)}
-        className="card-soft card-lift mt-4 w-full cursor-pointer p-10 text-left"
+        aria-expanded={flipped}
+        className="flex min-h-[18rem] w-full cursor-pointer flex-col rounded-2xl border bg-card p-8 text-left transition-colors hover:border-primary/30 sm:p-10"
+        style={{ boxShadow: "var(--shadow-soft)" }}
       >
         {card.session_title && (
           <p className="mb-3 text-xs font-medium text-primary/80">
             {card.session_title}
           </p>
         )}
-        <p className="text-base leading-relaxed">{card.front}</p>
+        <p className="text-lg leading-relaxed">{card.front}</p>
 
         {card.source_ref?.kind === "occlusion" &&
         card.source_ref.figureId &&
@@ -150,12 +154,12 @@ export function ReviewClient({
         ) : null}
 
         {flipped && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 mt-6 border-t pt-6 duration-300">
-            <p className="text-sm leading-relaxed text-foreground/90">
+          <div className="animate-slide-up mt-auto border-t pt-6">
+            <p className="text-[15px] leading-relaxed text-foreground/90">
               {card.back}
             </p>
             {card.source_ref?.page && (
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-3 text-xs tabular-nums text-muted-foreground">
                 p. {card.source_ref.page}
               </p>
             )}
@@ -164,7 +168,7 @@ export function ReviewClient({
       </button>
 
       {flipped ? (
-        <div className="mt-4 flex gap-2 animate-slide-up">
+        <div className="mt-3 flex gap-2 animate-slide-up">
           <button
             onClick={() => grade("again")}
             className="btn-squish flex-1 rounded-lg border border-red-200 bg-red-500/10 px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-500/20"
@@ -194,10 +198,17 @@ export function ReviewClient({
           </button>
         </div>
       ) : (
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          tap the card or press space to reveal
+        <p className="mt-3 flex h-[42px] items-center justify-center text-xs text-muted-foreground">
+          tap the card or press{" "}
+          <kbd className="mx-1 rounded border bg-secondary px-1.5 py-0.5 font-sans text-[11px] font-medium">
+            space
+          </kbd>{" "}
+          to reveal
         </p>
       )}
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        space = flip · 1 again · 2 good · 3 easy
+      </p>
     </div>
   );
 }

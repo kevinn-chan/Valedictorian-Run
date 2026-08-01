@@ -87,15 +87,13 @@ export default async function SearchPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10">
-      <Link
-        href="/"
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
-        ← All sessions
-      </Link>
+    <main className="mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 lg:py-10">
+      <h1 className="page-title">Search</h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        Full-text across every file in every session.
+      </p>
 
-      <form action="/search" method="get" className="mt-5">
+      <form action="/search" method="get" className="mt-6">
         <div className="flex items-center gap-2 rounded-xl border bg-card px-3.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring/30">
           <Search className="size-4 shrink-0 text-muted-foreground" />
           <input
@@ -126,7 +124,11 @@ export default async function SearchPage({
 
       <div className="mt-4 space-y-6">
         {[...bySession.entries()].map(([sid, g]) => (
-          <section key={sid} className="overflow-hidden rounded-xl border">
+          <section
+            key={sid}
+            className="overflow-hidden rounded-2xl border bg-card"
+            style={{ boxShadow: "var(--shadow-soft)" }}
+          >
             <div className="flex items-center justify-between bg-secondary/40 px-5 py-3">
               <Link
                 href={`/sessions/${sid}`}

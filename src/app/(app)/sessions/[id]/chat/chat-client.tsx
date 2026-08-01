@@ -157,7 +157,9 @@ export function ChatClient({
           sendMessage({ text: input });
           setInput("");
         }}
-        className="sticky bottom-0 -mx-6 border-t bg-background/80 px-6 py-3 backdrop-blur-sm"
+        // Sticky sticks to the viewport edge, where the mobile tab bar lives —
+        // so clear its height below `lg` or the composer sits underneath it.
+        className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-20 -mx-5 border-t bg-background/85 px-5 py-3 backdrop-blur-sm sm:-mx-8 sm:px-8 lg:bottom-0"
       >
         <div className="flex gap-2">
           <input

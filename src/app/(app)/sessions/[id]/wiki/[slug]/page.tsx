@@ -121,6 +121,7 @@ export default async function WikiPage({
                   <li key={s.slug}>
                     <Link
                       href={`/sessions/${id}/wiki/${s.slug}`}
+                      prefetch={false}
                       aria-current={s.slug === slug ? "page" : undefined}
                       className={`block rounded-lg px-2.5 py-1.5 text-[13px] leading-snug transition-colors ${
                         s.slug === slug

@@ -338,6 +338,7 @@ export default async function SessionPage({
                     <li key={t.slug}>
                       <Link
                         href={`${base}/wiki/${t.slug}`}
+                        prefetch={false}
                         className="group block"
                       >
                         <div className="flex items-baseline justify-between gap-3">

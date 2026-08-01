@@ -129,7 +129,7 @@ export default async function AnalyticsPage({
                   return (
                     <li key={r.slug} className="rounded-xl px-4 py-3 transition-colors hover:bg-secondary/40">
                       <div className="flex items-center gap-3">
-                        <Link href={href} className="min-w-0 flex-1 truncate text-sm font-medium hover:text-primary">
+                        <Link href={href} prefetch={false} className="min-w-0 flex-1 truncate text-sm font-medium hover:text-primary">
                           {r.title}
                         </Link>
                         <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${s.cls}`}>

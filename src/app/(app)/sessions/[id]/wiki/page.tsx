@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookOpen, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { CardCover, PageHeader, ProgressBar } from "@/components/ui-kit";
+import { PageHeader, ProgressBar } from "@/components/ui-kit";
 
 export default async function WikiIndex({
   params,
@@ -12,7 +12,7 @@ export default async function WikiIndex({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: session }, { data: pages }, { data: cards }, { data: figures }] =
+  const [{ data: session }, { data: pages }, { data: cards }] =
     await Promise.all([
       supabase.from("sessions").select("id, title").eq("id", id).single(),
       supabase
@@ -21,13 +21,6 @@ export default async function WikiIndex({
         .eq("session_id", id)
         .order("title"),
       supabase.from("cards").select("topic_slug, reps").eq("session_id", id),
-      // Figures are already tagged with the topic they belong to, so each topic
-      // card can show its own diagram rather than a generic icon.
-      supabase
-        .from("figures")
-        .select("id, topic_slug, page")
-        .eq("session_id", id)
-        .order("page"),
     ]);
   if (!session) notFound();
 
@@ -35,16 +28,6 @@ export default async function WikiIndex({
   const topics = pages?.filter((p) => p.kind === "topic") ?? [];
   const all = cards ?? [];
 
-  const coverByTopic = new Map<
-    string,
-    { id: string; page: number }
-  >();
-  for (const f of figures ?? [])
-    if (f.topic_slug && !coverByTopic.has(f.topic_slug))
-      coverByTopic.set(f.topic_slug, {
-        id: f.id,
-        page: f.page,
-      });
 
   return (
     <main className="mx-auto w-full max-w-[1180px] px-5 py-8 sm:px-8 lg:py-10">
@@ -68,7 +51,6 @@ export default async function WikiIndex({
               const refPages = (t.source_refs as { pages?: number[] } | null)
                 ?.pages;
               const cs = all.filter((c) => c.topic_slug === t.slug);
-              const cover = coverByTopic.get(t.slug);
               const pct = cs.length
                 ? cs.filter((c) => c.reps >= 2).length / cs.length
                 : null;
@@ -76,14 +58,9 @@ export default async function WikiIndex({
                 <li key={t.slug}>
                   <Link
                     href={`/sessions/${id}/wiki/${t.slug}`}
+                    prefetch={false}
                     className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
                   >
-                    <CardCover
-                      className="h-24"
-                      figureId={cover?.id}
-                      page={cover?.page}
-                      title={t.title}
-                    />
                     <div className="flex flex-1 flex-col p-4">
                       <div className="flex items-start gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
@@ -137,6 +114,7 @@ export default async function WikiIndex({
               <li key={p.slug}>
                 <Link
                   href={`/sessions/${id}/wiki/${p.slug}`}
+                  prefetch={false}
                   className="group flex items-center gap-3 rounded-2xl border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-soft)]"
                 >
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">

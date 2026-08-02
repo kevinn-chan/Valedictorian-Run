@@ -1,5 +1,8 @@
 # Valedictorian Run
 
+<!-- deploy-webhook-test -->
+
+
 A private, two-user study app: drop a course's files (lecture PDFs, notes, cheatsheets) into a
 **session**, and it compiles them into a topic wiki, spaced-repetition flashcards, mock exams,
 teach-back grading, a day-by-day learning plan, and a Q&A chat that answers only from your

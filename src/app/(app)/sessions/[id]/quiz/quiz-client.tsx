@@ -86,7 +86,7 @@ export function QuizClient({
                     {h.score}/{h.total}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(h.taken_at).toLocaleDateString(undefined, {
+                    {new Date(h.taken_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })}

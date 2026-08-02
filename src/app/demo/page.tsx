@@ -83,6 +83,7 @@ export default async function DemoPage() {
                   <li key={t.slug}>
                     <Link
                       href={`/demo/${t.slug}`}
+                      prefetch={false}
                       className="group flex items-center gap-3 rounded-2xl border border-indigo-100 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300"
                     >
                       <BookOpen className="size-4 shrink-0 text-indigo-400 transition group-hover:text-indigo-600" />
@@ -102,6 +103,7 @@ export default async function DemoPage() {
                 <li key={d.slug}>
                   <Link
                     href={`/demo/${d.slug}`}
+                    prefetch={false}
                     className="group flex items-center gap-3 rounded-2xl border border-dashed border-indigo-200 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300"
                   >
                     <FileText className="size-4 shrink-0 text-indigo-400 transition group-hover:text-indigo-600" />

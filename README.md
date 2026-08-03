@@ -1,15 +1,20 @@
 # Valedictorian Run
 
-<!-- deploy-webhook-test -->
-
 
 A private, two-user study app: drop a course's files (lecture PDFs, notes, cheatsheets) into a
 **session**, and it compiles them into a topic wiki, spaced-repetition flashcards, mock exams,
 teach-back grading, a day-by-day learning plan, and a Q&A chat that answers only from your
 materials — **every answer cited to its source page**.
 
-No vector database. It's a working take on Karpathy's "RAG is dead": **compile-on-ingest +
-full-context + a lexical fallback**, not chunk → embed → vector top-k.
+No vector database. No embeddings. This is a working take on Karpathy's **"RAG is dead"**: compile the
+source material once on upload, hold the full context in every query, fall back to lexical search
+(Postgres `tsvector` + `ts_rank`) only when the context window fills. Zero retrieval latency, zero
+relevance tuning, zero drift. The bet is that throwing away the retrieval stack and just *reading* the
+material works better for a bounded corpus — and so far, it does.
+
+**[Try the live demo →](https://valedictorian-run.vercel.app/demo)** (read-only, no sign-in)
+
+**Live app:** [valedictorian-run.vercel.app](https://valedictorian-run.vercel.app) · **OSS demo repo:** [Valedictorian-Run-Demo](https://github.com/kevinn-chan/Valedictorian-Run-Demo)
 
 Stack: Next.js 16 (App Router) on Vercel Hobby · TypeScript · Tailwind v4 · Supabase Free
 (Postgres + RLS + Storage + Auth) · Vercel AI SDK · Gemini free tier (OpenAI Tier 3 as
@@ -35,6 +40,14 @@ Docs: [PLAN.md](PLAN.md) (architecture + phases) · [PLATFORM-FACTS.md](PLATFORM
 - **Manage** — per-file recompile, rename, delete-with-confirm.
 - **Auth** — a single shared password → pick a profile (two-step). RLS keeps each user's data isolated.
 - **`/demo`** — a public, read-only sample course (no sign-in).
+- **Cross-session search** — full-text search across all sessions with `ts_rank` relevance ordering and per-session filter chips.
+- **Image occlusion** — draw boxes over figure labels, review them as masked flashcards; vision-powered auto-suggest.
+- **Export** — download a session's wiki as Markdown or its flashcards as Anki-compatible TSV.
+- **Keyboard-first review** — number keys to grade, `u` to undo the last grade.
+- **Daily streak & review goal** — consecutive-day streak counter and daily review progress on the dashboard.
+- **Exam countdown** — per-session exam date with a countdown badge (red at ≤7 days).
+- **Weakest topics** — cross-session ranking of topics by mastery, surfaced on the dashboard.
+- **Profile switch** — one-click switch between profiles from the sidebar, no re-login.
 
 ## Local dev
 

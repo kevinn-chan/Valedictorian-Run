@@ -186,6 +186,38 @@ export function Landing() {
           </div>
         </section>
 
+        {/* Technical thesis */}
+        <section className="mx-auto w-full max-w-5xl px-6 pb-20">
+          <div className="rounded-3xl border border-border bg-card p-8 sm:p-10" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-primary">
+              The thesis
+            </p>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
+              RAG is dead — compile instead
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Most study tools retrieve chunks at query time, hoping the right
+              fragment lands in context. We compile the entire corpus at ingest —
+              every page becomes structured knowledge, every claim stamped to its
+              source. Zero retrieval latency. Zero relevance tuning. Zero drift.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl bg-secondary/50 p-5">
+                <p className="text-2xl font-semibold tabular-nums text-foreground">0</p>
+                <p className="mt-1 text-sm text-muted-foreground">vector databases</p>
+              </div>
+              <div className="rounded-2xl bg-secondary/50 p-5">
+                <p className="text-2xl font-semibold tabular-nums text-foreground">100%</p>
+                <p className="mt-1 text-sm text-muted-foreground">of the corpus in context</p>
+              </div>
+              <div className="rounded-2xl bg-secondary/50 p-5">
+                <p className="text-2xl font-semibold tabular-nums text-foreground">$0</p>
+                <p className="mt-1 text-sm text-muted-foreground">monthly running cost</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Learning objectives */}
         <section className="mx-auto w-full max-w-3xl px-6 pb-20">
           <div className="rounded-3xl border border-border bg-card p-8" style={{ boxShadow: "var(--shadow-soft)" }}>
@@ -210,13 +242,13 @@ export function Landing() {
 
         {/* CTA */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
-          <div className="rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)]">
+          <div className="rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)] dark:shadow-[0_20px_60px_-20px_rgba(129,140,248,0.3)]">
             <h2 className="text-3xl font-semibold tracking-tight text-primary-foreground">
               Ready to run for valedictorian?
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/70">
-              Two seats, zero subscriptions. Your materials stay yours — they
-              just learn to fight back.
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/80">
+              Two seats, zero subscriptions, zero vector databases. Your
+              materials stay yours — they just learn to fight back.
             </p>
             <Link
               href="/login"

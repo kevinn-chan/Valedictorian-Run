@@ -114,3 +114,17 @@ export function examTrend(
   const best = pts.reduce((m, p) => (p.pct > m ? p.pct : m), 0);
   return { pts, latest: pts.at(-1) ?? null, best, count: pts.length };
 }
+
+// Sort due cards: weakest-topic cards first, then highest-lapse within topic.
+// Ungrouped cards (no topic match) go last.
+export function sortByWeakness<
+  T extends { topic_slug: string | null; lapses: number },
+>(dueCards: T[], allCards: CardStat[], topics: TopicRef[]): T[] {
+  const rows = topicMastery(allCards, topics);
+  const pctMap = new Map(rows.map((r) => [r.slug, r.masteryPct]));
+  return [...dueCards].sort((a, b) => {
+    const pa = pctMap.get(a.topic_slug ?? "") ?? 1;
+    const pb = pctMap.get(b.topic_slug ?? "") ?? 1;
+    return pa - pb || b.lapses - a.lapses;
+  });
+}

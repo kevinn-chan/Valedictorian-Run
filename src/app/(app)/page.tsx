@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, FileText, Flame, Layers, Plus, Search, Sparkles, Target } from "lucide-react";
+import { ArrowRight, BookOpen, FileText, Layers, Plus, Search, Sparkles } from "lucide-react";
 import { DeleteButton } from "./delete-button";
 import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
 import { getProfiles } from "@/lib/profiles";
-import { CardCover, ProgressBar, ProgressRing, StatTile } from "@/components/ui-kit";
+import { CardCover, ProgressBar, ProgressRing, ReviewHeatmap, StatTile } from "@/components/ui-kit";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -302,43 +302,12 @@ export default async function Home() {
             )}
           </div>
 
-          <div
-            className="rounded-2xl border bg-card p-5"
-            style={{ boxShadow: "var(--shadow-soft)" }}
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold">Daily streak</h2>
-              <Flame className={`size-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`} />
-            </div>
-            <div className="mt-3 flex items-baseline gap-1.5">
-              <span className="text-3xl font-semibold tabular-nums tracking-tight">
-                {streak}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                day{streak === 1 ? "" : "s"}
-              </span>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1 text-muted-foreground">
-                  <Target className="size-3" />
-                  Today
-                </span>
-                <span className="font-medium tabular-nums">
-                  {todayCount}/{DAILY_GOAL}
-                </span>
-              </div>
-              <ProgressBar
-                value={Math.min(todayCount / DAILY_GOAL, 1)}
-                className="mt-2"
-              />
-              <p className="mt-2 text-xs text-muted-foreground">
-                {todayCount >= DAILY_GOAL
-                  ? "Goal hit — keep the streak alive tomorrow."
-                  : `${DAILY_GOAL - todayCount} more to hit today's goal.`}
-              </p>
-            </div>
-          </div>
+          <ReviewHeatmap
+            reviews={reviews ?? []}
+            streak={streak}
+            todayCount={todayCount}
+            dailyGoal={DAILY_GOAL}
+          />
 
           {weakestTopics.length > 0 && (
             <div

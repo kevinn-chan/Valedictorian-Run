@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Flame } from "lucide-react";
 
 /* Shared vocabulary for every authenticated screen. One card shape, one tile,
    one header, one ring — so the app reads as a single surface rather than a
@@ -280,19 +281,23 @@ export function ReviewHeatmap({
     countByDay.set(day, (countByDay.get(day) ?? 0) + 1);
   }
 
-  // Build 84-day grid ending today, aligned to weeks (Mon start)
+  // Build 84-day grid: 12 full Mon-Sun weeks, the most recent of which
+  // contains today. Cells after today (future days in the current week)
+  // are simply not emitted, rather than rendered as phantom future dates.
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayDay = (today.getDay() + 6) % 7; // 0=Mon
-  const startOffset = todayDay + 7 * 11; // go back to Monday of 12 weeks ago
+  const startOffset = todayDay + 7 * 11; // Monday, 11 full weeks before this week's Monday
   const start = new Date(today);
   start.setDate(start.getDate() - startOffset);
 
   const cells: { date: string; count: number }[] = [];
   const d = new Date(start);
   for (let i = 0; i < 84; i++) {
-    const key = d.toLocaleDateString("en-CA");
-    cells.push({ date: key, count: countByDay.get(key) ?? 0 });
+    if (d <= today) {
+      const key = d.toLocaleDateString("en-CA");
+      cells.push({ date: key, count: countByDay.get(key) ?? 0 });
+    }
     d.setDate(d.getDate() + 1);
   }
 
@@ -306,11 +311,9 @@ export function ReviewHeatmap({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <span
-            className={`text-sm ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}
-          >
-            🔥
-          </span>
+          <Flame
+            className={`size-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}
+          />
           <span className="text-sm font-semibold">
             {streak} day{streak === 1 ? "" : "s"}
           </span>

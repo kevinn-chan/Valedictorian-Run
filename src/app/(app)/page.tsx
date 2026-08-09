@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
 import { getProfiles } from "@/lib/profiles";
-import { CardCover, ProgressBar, ProgressRing, ReviewHeatmap, StatTile } from "@/components/ui-kit";
+import { CardCover, ProgressBar, ProgressRing, ReviewHeatmap, Sparkline, StatTile } from "@/components/ui-kit";
+import { SnapshotTrigger } from "@/components/snapshot-trigger";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -16,8 +17,14 @@ export default async function Home() {
   const profileName = getProfiles().find((p) => p.email === email)?.name;
 
   const now = new Date().toISOString();
-  const [{ data: sessions }, { data: cards }, { data: topicPages }, { data: figures }, { data: reviews }] =
-    await Promise.all([
+  const [
+    { data: sessions },
+    { data: cards },
+    { data: topicPages },
+    { data: figures },
+    { data: reviews },
+    { data: snapshots },
+  ] = await Promise.all([
       supabase
         .from("sessions")
         .select("id, title, created_at, files(count)")
@@ -35,6 +42,12 @@ export default async function Home() {
         .from("reviews")
         .select("reviewed_at")
         .order("reviewed_at", { ascending: false }),
+      supabase
+        .from("mastery_snapshots")
+        .select("snapshot_date, total_cards, mastered_cards")
+        .eq("user_id", auth.claims.sub as string)
+        .order("snapshot_date", { ascending: true })
+        .limit(14),
     ]);
 
   const coverBySession = new Map<
@@ -291,6 +304,14 @@ export default async function Home() {
                   ? "Solid progress — keep going."
                   : "Early days. A few reviews a day compounds fast."}
             </p>
+            {(() => {
+              const pts = (snapshots ?? []).map((s) => ({
+                pct: s.total_cards ? s.mastered_cards / s.total_cards : 0,
+              }));
+              return pts.length >= 2 ? (
+                <Sparkline pts={pts} className="mx-auto mt-4" />
+              ) : null;
+            })()}
             {dueCount > 0 && (
               <Link
                 href="/review"
@@ -373,6 +394,7 @@ export default async function Home() {
           </div>
         </aside>
       </div>
+      <SnapshotTrigger />
     </main>
   );
 }

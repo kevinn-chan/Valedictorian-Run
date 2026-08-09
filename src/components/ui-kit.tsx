@@ -262,6 +262,63 @@ export function Panel({
   );
 }
 
+/** Micro area chart for trends. Used for exam accuracy and mastery trends. */
+export function Sparkline({
+  pts,
+  className = "",
+}: {
+  pts: { pct: number }[];
+  className?: string;
+}) {
+  if (pts.length < 2) return null;
+  const w = 320,
+    h = 80,
+    pad = 8;
+  const xs = pts.map((_, i) =>
+    pts.length > 1 ? pad + (i * (w - 2 * pad)) / (pts.length - 1) : w / 2
+  );
+  const ys = pts.map((p) => h - pad - p.pct * (h - 2 * pad));
+  const line = xs
+    .map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)} ${ys[i].toFixed(1)}`)
+    .join(" ");
+  const area = `${line} L${xs[xs.length - 1].toFixed(1)} ${h} L${xs[0].toFixed(1)} ${h} Z`;
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className={`h-20 w-full max-w-[320px] ${className}`}
+      preserveAspectRatio="none"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#spark)" />
+      <path
+        d={line}
+        fill="none"
+        stroke="var(--primary)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {xs.map((x, i) => (
+        <circle
+          key={i}
+          cx={x}
+          cy={ys[i]}
+          r="3"
+          fill="var(--primary)"
+          stroke="var(--card)"
+          strokeWidth="1.5"
+        />
+      ))}
+    </svg>
+  );
+}
+
 /** GitHub-style review activity heatmap — 12 weeks of daily review counts. */
 export function ReviewHeatmap({
   reviews,

@@ -4,7 +4,7 @@ import { GraduationCap, Layers, Sparkles, TrendingUp } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { topicMastery, rankByWeakness, examTrend, UNGROUPED_SLUG } from "@/lib/analytics";
 import { LEECH_THRESHOLD } from "@/lib/srs";
-import { PageHeader, ProgressRing, StatTile } from "@/components/ui-kit";
+import { PageHeader, ProgressRing, Sparkline, StatTile } from "@/components/ui-kit";
 
 const STATUS = {
   weak: { label: "Needs work", cls: "bg-red-500/12 text-red-700", bar: "bg-red-500" },
@@ -12,33 +12,6 @@ const STATUS = {
   solid: { label: "Solid", cls: "bg-emerald-500/12 text-emerald-700", bar: "bg-emerald-500" },
   unstudied: { label: "Not started", cls: "bg-secondary text-muted-foreground", bar: "bg-muted-foreground/30" },
 } as const;
-
-// Exam accuracy over time. Area fill under the line gives the trend weight the
-// bare stroke didn't have at this size.
-function Sparkline({ pts }: { pts: { pct: number }[] }) {
-  const w = 320, h = 80, pad = 8;
-  const xs = pts.map((_, i) =>
-    pts.length > 1 ? pad + (i * (w - 2 * pad)) / (pts.length - 1) : w / 2
-  );
-  const ys = pts.map((p) => h - pad - p.pct * (h - 2 * pad));
-  const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(" ");
-  const area = `${line} L${xs[xs.length - 1].toFixed(1)} ${h} L${xs[0].toFixed(1)} ${h} Z`;
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-20 w-full max-w-[320px]" preserveAspectRatio="none" aria-hidden>
-      <defs>
-        <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={area} fill="url(#spark)" />
-      <path d={line} fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      {xs.map((x, i) => (
-        <circle key={i} cx={x} cy={ys[i]} r="3" fill="var(--primary)" stroke="var(--card)" strokeWidth="1.5" />
-      ))}
-    </svg>
-  );
-}
 
 export default async function AnalyticsPage({
   params,

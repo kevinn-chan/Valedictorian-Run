@@ -13,15 +13,17 @@ export default async function DueTodayPage() {
       supabase
         .from("cards")
         .select(
-          "id, front, back, topic_slug, source_ref, interval_days, ease, reps, lapses, sessions(title)"
+          "id, front, back, topic_slug, source_ref, interval_days, ease, reps, lapses, session_id, sessions(title)"
         )
         .lte("due_at", new Date().toISOString())
         .order("due_at")
         .limit(100),
-      supabase.from("cards").select("topic_slug, reps, lapses, ease, due_at"),
+      supabase
+        .from("cards")
+        .select("topic_slug, reps, lapses, ease, due_at, session_id"),
       supabase
         .from("wiki_pages")
-        .select("slug, title")
+        .select("slug, title, session_id")
         .eq("kind", "topic"),
     ]);
 
@@ -36,6 +38,7 @@ export default async function DueTodayPage() {
       ease: c.ease,
       reps: c.reps,
       lapses: c.lapses,
+      session_id: c.session_id,
       session_title:
         (c.sessions as unknown as { title: string } | null)?.title ?? null,
     })),

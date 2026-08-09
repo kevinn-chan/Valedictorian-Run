@@ -38,7 +38,11 @@ export default async function ReviewPage({
     ]);
   if (!session) notFound();
 
-  const cards = sortByWeakness(due ?? [], allCards ?? [], topics ?? []);
+  const cards = sortByWeakness(
+    (due ?? []).map((c) => ({ ...c, session_id: id })),
+    (allCards ?? []).map((c) => ({ ...c, session_id: id })),
+    (topics ?? []).map((t) => ({ ...t, session_id: id }))
+  );
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 py-8 sm:px-8 lg:py-12">

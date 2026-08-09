@@ -18,7 +18,7 @@ export async function POST() {
     .select("*", { count: "exact", head: true })
     .gte("reps", 2);
 
-  await supabase.from("mastery_snapshots").upsert(
+  const { error } = await supabase.from("mastery_snapshots").upsert(
     {
       user_id: userId,
       snapshot_date: new Date().toLocaleDateString("en-CA"),
@@ -27,6 +27,10 @@ export async function POST() {
     },
     { onConflict: "user_id,snapshot_date" }
   );
+  if (error) {
+    console.error("mastery_snapshots upsert failed:", error.message);
+    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -46,7 +46,7 @@ export default async function Home() {
         .from("mastery_snapshots")
         .select("snapshot_date, total_cards, mastered_cards")
         .eq("user_id", auth.claims.sub as string)
-        .order("snapshot_date", { ascending: true })
+        .order("snapshot_date", { ascending: false })
         .limit(14),
     ]);
 
@@ -305,9 +305,12 @@ export default async function Home() {
                   : "Early days. A few reviews a day compounds fast."}
             </p>
             {(() => {
-              const pts = (snapshots ?? []).map((s) => ({
-                pct: s.total_cards ? s.mastered_cards / s.total_cards : 0,
-              }));
+              const pts = (snapshots ?? [])
+                .slice()
+                .reverse()
+                .map((s) => ({
+                  pct: s.total_cards ? s.mastered_cards / s.total_cards : 0,
+                }));
               return pts.length >= 2 ? (
                 <Sparkline pts={pts} className="mx-auto mt-4" />
               ) : null;

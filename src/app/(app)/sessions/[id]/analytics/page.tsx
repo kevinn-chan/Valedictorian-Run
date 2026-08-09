@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { GraduationCap, Layers, Sparkles, TrendingUp } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { topicMastery, rankByWeakness, examTrend, UNGROUPED_SLUG } from "@/lib/analytics";
+import { LEECH_THRESHOLD } from "@/lib/srs";
 import { PageHeader, ProgressRing, StatTile } from "@/components/ui-kit";
 
 const STATUS = {
@@ -52,7 +53,7 @@ export default async function AnalyticsPage({
       supabase.from("sessions").select("id, title").eq("id", id).single(),
       supabase
         .from("cards")
-        .select("topic_slug, reps, lapses, ease, due_at")
+        .select("front, topic_slug, reps, lapses, ease, due_at")
         .eq("session_id", id),
       supabase
         .from("wiki_pages")
@@ -158,6 +159,47 @@ export default async function AnalyticsPage({
               </ul>
             )}
           </section>
+
+          {(() => {
+            const leeches = (cards ?? [])
+              .filter((c) => c.lapses >= LEECH_THRESHOLD)
+              .sort((a, b) => b.lapses - a.lapses);
+            if (!leeches.length) return null;
+            const topicMap = new Map((topics ?? []).map((t) => [t.slug, t.title]));
+            return (
+              <section className="mt-6">
+                <h2 className="text-base font-semibold text-red-700 dark:text-red-400">
+                  Leeches — {leeches.length} card{leeches.length === 1 ? "" : "s"} you keep forgetting
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Cards with {LEECH_THRESHOLD}+ lapses. Consider rephrasing, splitting, or asking whether you really need this fact.
+                </p>
+                <ul className="mt-4 space-y-1">
+                  {leeches.map((c, i) => (
+                    <li key={i} className="rounded-xl px-4 py-3 transition-colors hover:bg-red-500/5">
+                      <div className="flex items-center gap-3">
+                        <span className="min-w-0 flex-1 truncate text-sm">
+                          {(c as { front?: string }).front ?? "—"}
+                        </span>
+                        <span className="shrink-0 rounded-full bg-red-500/12 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:text-red-400">
+                          {c.lapses} lapses
+                        </span>
+                      </div>
+                      {c.topic_slug && topicMap.has(c.topic_slug) && (
+                        <Link
+                          href={`/sessions/${id}/wiki/${c.topic_slug}`}
+                          prefetch={false}
+                          className="mt-1 text-xs text-muted-foreground hover:text-primary"
+                        >
+                          {topicMap.get(c.topic_slug)}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })()}
         </div>
 
         <aside className="space-y-4">

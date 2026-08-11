@@ -37,7 +37,8 @@ export default async function WikiPage({
     ]);
   if (!page) notFound();
 
-  const pages = (page.source_refs as { pages?: number[] } | null)?.pages;
+  const refs = page.source_refs as { pages?: number[]; file_id?: string } | null;
+  const pages = refs?.pages;
 
   // Navigate within the same kind (topic ↔ topic, digest ↔ digest).
   const ordered = (siblings ?? []).filter((p) => p.kind === page.kind);
@@ -70,7 +71,7 @@ export default async function WikiPage({
           {/* Prose caps its own measure so the article stays readable even
               though the shell around it is wide. */}
           <div className="mt-9 max-w-[68ch]">
-            <MarkdownView markdown={page.markdown} />
+            <MarkdownView markdown={page.markdown} fileId={refs?.file_id} />
           </div>
 
           {figures && figures.length > 0 && (

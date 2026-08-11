@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createSession, deleteSession } from "./actions";
 import { Landing } from "./landing";
 import { getProfiles } from "@/lib/profiles";
-import { CardCover, ProgressBar, ProgressRing, ReviewHeatmap, Sparkline, StatTile } from "@/components/ui-kit";
+import { CardCover, Forecast, ProgressBar, ProgressRing, ReviewHeatmap, Sparkline, StatTile } from "@/components/ui-kit";
 import { SnapshotTrigger } from "@/components/snapshot-trigger";
 
 export default async function Home() {
@@ -325,6 +325,8 @@ export default async function Home() {
               </Link>
             )}
           </div>
+
+          <Forecast cards={cards ?? []} />
 
           <ReviewHeatmap
             reviews={reviews ?? []}

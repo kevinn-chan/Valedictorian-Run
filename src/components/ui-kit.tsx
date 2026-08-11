@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { Flame, Users } from "lucide-react";
 
 /* Shared vocabulary for every authenticated screen. One card shape, one tile,
    one header, one ring — so the app reads as a single surface rather than a
@@ -483,6 +483,63 @@ export function Forecast({ cards }: { cards: { due_at: string }[] }) {
         <span>Today</span>
         <span>+14d</span>
       </div>
+    </div>
+  );
+}
+
+/** Read-only glance at the other profile's progress. Kevin/Tina already share
+ * one password and can fully switch into each other's account in one click —
+ * this isn't a privacy boundary, just a shortcut. */
+export function StudyBuddy({
+  name,
+  streak,
+  masteryPct,
+  mastered,
+  totalCards,
+  weakestTopic,
+}: {
+  name: string;
+  streak: number;
+  masteryPct: number;
+  mastered: number;
+  totalCards: number;
+  weakestTopic: { title: string; pct: number } | null;
+}) {
+  return (
+    <div
+      className="rounded-2xl border bg-card p-5"
+      style={{ boxShadow: "var(--shadow-soft)" }}
+    >
+      <div className="flex items-center gap-1.5">
+        <Users className="size-4 text-muted-foreground" />
+        <h2 className="text-sm font-semibold">{name}&apos;s progress</h2>
+      </div>
+      {totalCards === 0 ? (
+        <p className="mt-2 text-xs text-muted-foreground">
+          No sessions started yet.
+        </p>
+      ) : (
+        <>
+          <div className="mt-3 flex items-center justify-between">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Flame
+                className={`size-3.5 ${streak > 0 ? "text-orange-500" : ""}`}
+              />
+              {streak} day{streak === 1 ? "" : "s"}
+            </span>
+            <span className="text-xs font-medium tabular-nums text-muted-foreground">
+              {mastered}/{totalCards} mastered
+            </span>
+          </div>
+          <ProgressBar value={masteryPct} className="mt-2" />
+          {weakestTopic && (
+            <p className="mt-3 truncate text-xs text-muted-foreground">
+              Weakest: <span className="font-medium">{weakestTopic.title}</span> (
+              {Math.round(weakestTopic.pct * 100)}%)
+            </p>
+          )}
+        </>
+      )}
     </div>
   );
 }

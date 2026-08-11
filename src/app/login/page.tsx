@@ -18,7 +18,7 @@ export default async function LoginPage({
         <ThemeToggle compact />
       </div>
       <div className="w-full max-w-md text-center">
-        <p className="text-sm font-semibold text-indigo-600">
+        <p className="text-sm font-semibold text-primary">
           <span aria-hidden>●</span> Valedictorian Run
         </p>
 

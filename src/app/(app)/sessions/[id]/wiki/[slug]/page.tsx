@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MarkdownView } from "./markdown-view";
 import { WikiNav } from "./wiki-nav";
+import { TopicCardControls } from "./topic-card-controls";
 
 export default async function WikiPage({
   params,
@@ -61,6 +62,9 @@ export default async function WikiPage({
                 ? `Source page ${Math.min(...pages)}`
                 : `Source pages ${Math.min(...pages)}–${Math.max(...pages)}`}
             </p>
+          )}
+          {page.kind === "topic" && (
+            <TopicCardControls sessionId={id} topicSlug={slug} />
           )}
 
           {/* Prose caps its own measure so the article stays readable even

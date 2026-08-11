@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen, LayoutGrid, Layers, LogOut, Search } from "lucide-react";
 import { NavLink } from "./nav-link";
+import { PomodoroTimer } from "./pomodoro-timer";
 import { ProfileSwitcher } from "./profile-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -107,6 +108,7 @@ export function Sidebar({
       </nav>
 
       <div className="space-y-1 border-t border-sidebar-border p-3">
+        <PomodoroTimer />
         <ThemeToggle />
         <ProfileSwitcher
           profiles={profiles}

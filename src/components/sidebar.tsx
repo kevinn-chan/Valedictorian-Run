@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, LayoutGrid, Layers, LogOut, Search } from "lucide-react";
+import { BookOpen, CalendarClock, LayoutGrid, Layers, LogOut, Search } from "lucide-react";
 import { NavLink } from "./nav-link";
 import { PomodoroTimer } from "./pomodoro-timer";
 import { ProfileSwitcher } from "./profile-switcher";
@@ -78,6 +78,15 @@ export function Sidebar({
           >
             <Search className="size-[18px]" />
             Search
+          </NavLink>
+          <NavLink
+            href="/plan"
+            className={ITEM}
+            activeClassName={ITEM_ACTIVE}
+            idleClassName={ITEM_IDLE}
+          >
+            <CalendarClock className="size-[18px]" />
+            Weekly plan
           </NavLink>
         </div>
 

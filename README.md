@@ -1,16 +1,9 @@
 # Valedictorian Run
 
-
 A private, two-user study app: drop a course's files (lecture PDFs, notes, cheatsheets) into a
 **session**, and it compiles them into a topic wiki, spaced-repetition flashcards, mock exams,
 teach-back grading, a day-by-day learning plan, and a Q&A chat that answers only from your
 materials — **every answer cited to its source page**.
-
-No vector database. No embeddings. This is a working take on Karpathy's **"RAG is dead"**: compile the
-source material once on upload, hold the full context in every query, fall back to lexical search
-(Postgres `tsvector` + `ts_rank`) only when the context window fills. Zero retrieval latency, zero
-relevance tuning, zero drift. The bet is that throwing away the retrieval stack and just *reading* the
-material works better for a bounded corpus — and so far, it does.
 
 **[Try the live demo →](https://valedictorian-run.vercel.app/demo)** (read-only, no sign-in)
 
@@ -48,6 +41,16 @@ Docs: [PLAN.md](PLAN.md) (architecture + phases) · [PLATFORM-FACTS.md](PLATFORM
 - **Exam countdown** — per-session exam date with a countdown badge (red at ≤7 days).
 - **Weakest topics** — cross-session ranking of topics by mastery, surfaced on the dashboard.
 - **Profile switch** — one-click switch between profiles from the sidebar, no re-login.
+
+## Why no vector database
+
+The grounded chat and citations don't use embeddings or a vector index — every answer is drawn
+from the corpus compiled on upload, held in full in context, with lexical search (Postgres
+`tsvector` + `ts_rank`) as a fallback only once a session's corpus outgrows the context window.
+Fewer moving parts, no relevance tuning, no retrieval drift — for a bounded, personal corpus like
+one course's materials, that turned out to be the simpler and more reliable choice. The inspiration
+was Karpathy's **"RAG is dead"** framing; see [PLAN.md](PLAN.md) for how the compile/context/lexical-fallback
+pipeline is actually built.
 
 ## Local dev
 

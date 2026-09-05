@@ -6,5 +6,9 @@ import { openai } from "@ai-sdk/openai";
 export function llm() {
   return process.env.LLM_PROVIDER === "openai"
     ? openai("gpt-5-mini")
-    : google("gemini-flash-latest"); // alias tracks current stable Flash — survives model retirements
+    // Pinned, NOT `gemini-flash-latest`: that alias now points at gemini-3.8-flash,
+    // whose free tier is capped at 20 requests and 503s under load — a compile
+    // burns one request and fails. Bump this deliberately when a newer Flash has
+    // real free-tier quota.
+    : google("gemini-3.7-flash");
 }

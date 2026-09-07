@@ -178,7 +178,7 @@ export function MobileBar({
           <form action="/auth/signout" method="post">
             <button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-lg px-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               Sign out
             </button>

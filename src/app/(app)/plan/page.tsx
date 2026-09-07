@@ -47,9 +47,7 @@ export default async function StudyPlanPage() {
 
           {plan?.generated_at && staleDays(plan.generated_at) > 7 && (
             <p className="mt-6 rounded-xl border border-amber-600/40 bg-amber-500/10 px-4 py-3 text-sm text-foreground">
-              This plan was generated {staleDays(plan.generated_at)} days ago and
-              covers a week that has passed — regenerate it for a current
-              schedule. Courses you have since added or removed won&apos;t appear.
+              {`This plan was generated ${staleDays(plan.generated_at)} days ago and covers a week that has passed — regenerate it for a current schedule. Courses you have since added or removed won't appear.`}
             </p>
           )}
 

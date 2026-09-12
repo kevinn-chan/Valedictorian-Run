@@ -58,6 +58,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
+  /* Cards and panels share the 2xl step: a 24px Tailwind default sitting 2.4px
+     from the ramp's own 21.6px is noise, not a level. */
+  --radius-3xl: calc(var(--radius) * 1.8);
 }
 
 /* Valedictorian Run — restrained palette anchored on the periwinkle seed
@@ -102,8 +105,12 @@
 
 .dark {
   color-scheme: dark;
-  --shadow-soft: 0 10px 36px -14px oklch(0.2 0.08 280 / 0.4);
-  --shadow-soft-hover: 0 16px 44px -14px oklch(0.2 0.08 280 / 0.5);
+  --shadow-soft:
+    inset 0 1px 0 oklch(1 0 0 / 0.05),
+    0 8px 24px -12px oklch(0 0 0 / 0.65);
+  --shadow-soft-hover:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 14px 32px -12px oklch(0 0 0 / 0.8);
   --background: #0f0e1a;
   --foreground: #e8e5f5;
   --card: #1a1830;
@@ -119,8 +126,8 @@
   --accent: #252240;
   --accent-foreground: #c4b5fd;
   --destructive: #ef4444;
-  --border: #2e2a48;
-  --input: #2e2a48;
+  --border: #3a355a;
+  --input: #3a355a;
   --ring: #818cf8;
   --sidebar: #161428;
   --sidebar-foreground: #e8e5f5;
@@ -136,7 +143,7 @@
 @utility card-soft {
   background-color: var(--card);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);
 }
 @utility card-lift {
@@ -171,7 +178,7 @@
 
 @utility card-tint {
   background-color: var(--muted);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
 }
 

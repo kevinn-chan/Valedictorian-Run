@@ -242,7 +242,7 @@ export function Landing() {
 
         {/* CTA */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
-          <div className="rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)] dark:shadow-[0_20px_60px_-20px_rgba(129,140,248,0.3)]">
+          <div className="rounded-3xl bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)] dark:shadow-[0_20px_60px_-20px_rgba(129,140,248,0.3)]">
             <h2 className="text-3xl font-semibold tracking-tight text-primary-foreground">
               Ready to run for valedictorian?
             </h2>

@@ -154,7 +154,7 @@ export default async function DemoPage() {
         )}
 
         <section
-          className="mt-16 rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/80 px-8 py-12 text-center"
+          className="mt-16 rounded-3xl bg-gradient-to-br from-primary to-primary/80 px-8 py-12 text-center"
           style={{ boxShadow: "var(--shadow-soft-hover)" }}
         >
           <h2 className="text-2xl font-semibold tracking-tight text-primary-foreground">

@@ -1,6 +1,6 @@
 # Design pass — anti-AI-slop
 
-Branch `design-pass-anti-slop`, sixteen commits off `main` (`e0490db`).
+Branch `design-pass-anti-slop`, twenty commits off `main` (`e0490db`).
 Tools: Impeccable 3.9.1 (`audit`, `critique` ×2 targets, bundled detector), Humanizer 3.0.0, puppeteer-core.
 
 **Headline:** the landing page read as AI-generated; the app UI did not. That split drove every decision here. The app's design system is genuinely good — named utilities, semantic shadow tokens, a global focus ring, a global reduced-motion reset — and the landing page used almost none of it.
@@ -91,6 +91,10 @@ These were unreachable in the first pass. They are not any more — see §3.
 | Exam countdown turned red inside 7 days — an urgency mechanic `PRODUCT.md:57-58` bans by name | `exam-countdown.tsx:74` | `3df71d9` |
 | **Review grade POST had no `res.ok` check and no catch** — a failed save was silent and permanent while the UI had already advanced | `review-client.tsx:84` | `ded7f42` |
 | Compile wait showed a static disabled label for a process documented to run up to 300s | `compile-button.tsx` | `48a4b39` |
+| Four design-system utilities no file used (`section-gap`, `section-gap-sm`, `card-tint`, `perspective-1000`) deleted; the landing's four hand-rolled press interactions now use `btn-squish` | `globals.css`, `landing.tsx` | `01449dc` |
+| The demo row's third card was a decoy — identical to two interactive cards, did nothing when clicked. Now a full-width worked answer; card grids 1 → 0 | `landing.tsx:159` | `01449dc` |
+| Two comments describing a world that no longer exists ("committed-light", "share one password") | `globals.css:5`, `ui-kit.tsx:489` | `01449dc` |
+| Last decorative blurred blob, its inline `<style>` keyframe, and the `overflow-hidden` that existed only to clip it | `landing.tsx` | `a4180e4` |
 
 ### Deferred — real, deliberately not done
 
@@ -117,19 +121,19 @@ These were unreachable in the first pass. They are not any more — see §3.
 3. **File list, keyboard only.** Tab to a row's delete button and confirm it is now visible on focus.
 4. **The digest page heading order.** Markdown headings shifted down one level; the size classes shifted with them so it should look identical. Confirm on a digest with deep nesting (h4/h5 now land where h3/h4 did).
 5. **Both themes on a real phone.** I tested at 375 in a headless viewport, which is not the same as a device.
-6. `.shots.mjs` in the repo root still signs in by clicking a profile button — that predates the magic-link migration and no longer works. It will mislead the next person.
+6. `.shots.mjs` has been repaired (it is gitignored, so it is not in these commits): it signs in with an admin-minted magic-link token, discovers the session id from the dashboard instead of hardcoding one, and writes to `docs/design-pass/shots` instead of a dead scratchpad path.
 
 ---
 
 ## 4. What still reads as AI-generated
 
-The honest list, after the second pass.
+Short, and all of it is now a decision rather than an oversight.
 
-1. **The composition is better but not distinctive.** The steps are a numbered sequence and the stats are on a baseline, so the page is no longer one component repeated — but the demo row is still a three-across card grid, and that is still the only real composition idea on the page.
-2. **The hero has no image.** One blurred CSS circle behind centred text. The product's best asset — real compiled output from a real deck — appears once, in the demo section, and that section remains the only part a generator could not have produced. It is about 20% of the page.
-3. **The landing still doesn't fully use its own design system.** The radius ramp and shadows are fixed, but `section-gap` is used by no file in the project, and the landing still hand-rolls `hover:-translate-y-0.5 active:scale-95` where `btn-squish` exists.
-4. **Two stale comments describe a world that no longer exists**: `globals.css:6-8` says the app is "committed-light" and `.dark` is "never rendered" (`layout.tsx:35` adds it); `ui-kit.tsx:491` says two users share one password (magic links replaced that). Both will mislead whoever edits next — that is how I lost an hour on the default theme.
-5. **`.shots.mjs` in the repo root is stale** — it signs in by clicking a profile button, which predates the magic-link migration.
+1. **The hero has no imagery.** It is typographic by choice now rather than decorated by reflex — the blurred blob is gone along with the inline `<style>` that animated it. But there is still no picture of the thing being sold. The honest options are a screenshot of the public demo course, a synthetic mock, or staying typographic. A screenshot of the real dashboard is out, because the landing is public and those are actual course materials; a mock would mean inventing product output in order to sell product output. **This one is yours to call.**
+2. **The demo section is still the page's only real composition idea**, and it is still where the differentiated content lives. It is more present than it was — two interactive cards plus a full-width worked answer rather than three lookalike cards — but the argument is still carried by one section.
+3. **The copy still leans on "zero X".** "Three steps, zero busywork", "Zero retrieval latency. Zero relevance tuning. Zero drift.", "zero subscriptions, zero vector databases". It is a real voice rather than a generated one, but it is a single rhetorical move used five times, and I left it because rewriting a headline's voice is an author's call.
+
+Everything else on the previous list is closed: the typeface, the hero-metric tiles, the repeated card grids, the shouting CTA, the locking quiz, the red countdown, the silent grade failure, the blank compile wait, the dead design-system utilities, the decoy card, and the two stale comments.
 
 ## 5. What went wrong in this pass
 

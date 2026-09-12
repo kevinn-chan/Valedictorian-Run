@@ -108,7 +108,7 @@ export function Uploader({ sessionId }: { sessionId: string }) {
           <span>Uploading {busy}…</span>
         ) : (
           <span>
-            Drop lecture PDFs, notes, or cheatsheets here — or{" "}
+            Drop lecture PDFs, notes, or cheatsheets here, or{" "}
             <span className="font-medium text-primary">browse</span>
           </span>
         )}

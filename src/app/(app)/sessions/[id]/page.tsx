@@ -231,7 +231,7 @@ export default async function SessionPage({
         <div className="mt-8 space-y-6">
           {isNewSession && (
             <p className="text-sm text-muted-foreground">
-              New session — start with{" "}
+              New session. Start with{" "}
               <span className="font-medium text-foreground">① Wiki</span>, then{" "}
               <span className="font-medium text-foreground">② Review</span>, then try a{" "}
               <span className="font-medium text-foreground">③ Mock exam</span>.
@@ -311,7 +311,7 @@ export default async function SessionPage({
           >
             <h2 className="text-sm font-semibold">Topic mastery</h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              From your review history — open one to revisit its notes.
+              From your review history. Open one to revisit its notes.
             </p>
             <ul className="mt-4 space-y-3">
               {topicPages

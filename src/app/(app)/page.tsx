@@ -141,7 +141,7 @@ export default async function Home() {
           <p className="mt-1.5 text-sm text-muted-foreground">
             {dueCount
               ? `${dueCount} card${dueCount === 1 ? "" : "s"} ready for review.`
-              : "Nothing due right now — you're all caught up."}
+              : "Nothing due right now. You're all caught up."}
           </p>
         </div>
         <form action="/search" method="get" className="w-full sm:w-72">
@@ -284,7 +284,7 @@ export default async function Home() {
                 No study sessions yet
               </h3>
               <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted-foreground">
-                A session holds the full corpus for one course — lecture PDFs,
+                A session holds the full corpus for one course: lecture PDFs,
                 notes, cheatsheets. Create one and drop your files in.
               </p>
             </section>
@@ -313,7 +313,7 @@ export default async function Home() {
               {masteryPct >= 0.8
                 ? "You know this material. Keep it warm."
                 : masteryPct >= 0.4
-                  ? "Solid progress — keep going."
+                  ? "Solid progress. Keep going."
                   : "Early days. A few reviews a day compounds fast."}
             </p>
             {(() => {
@@ -354,7 +354,7 @@ export default async function Home() {
             >
               <h2 className="text-sm font-semibold">Weakest topics</h2>
               <p className="mt-1 text-xs text-muted-foreground">
-                Across all sessions — review these first.
+                Across all sessions. Review these first.
               </p>
               <ul className="mt-3 space-y-2.5">
                 {weakestTopics.map((t) => (

@@ -57,7 +57,7 @@ export function QuizClient({
       <div className="mt-10">
         <p className="text-sm text-muted-foreground">
           A fresh 10-question mock exam, generated from your materials every
-          time — recall, mechanisms, and calculations, each answer cited.
+          time: recall, mechanisms, and calculations, each answer cited.
         </p>
         <button
           onClick={start}
@@ -121,7 +121,7 @@ export function QuizClient({
           <span className="text-2xl font-bold">
             {score}/{questions.length}
           </span>{" "}
-          — {score >= 8 ? "exam-ready on this material." : score >= 5 ? "solid — review the misses below." : "worth another pass through the wiki before exam day."}
+          {score >= 8 ? "Exam-ready on this material." : score >= 5 ? "Solid. Review the misses below." : "Worth another pass through the wiki before exam day."}
           <button
             onClick={start}
             disabled={busy}

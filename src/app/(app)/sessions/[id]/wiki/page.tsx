@@ -35,7 +35,7 @@ export default async function WikiIndex({
         back={`/sessions/${id}`}
         backLabel={session.title}
         title="Corpus wiki"
-        description="Your materials, compiled into study notes — every page cited."
+        description="Your materials, compiled into study notes, with every page cited."
       />
 
       {topics.length > 0 && (

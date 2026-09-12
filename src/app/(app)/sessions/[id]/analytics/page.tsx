@@ -55,7 +55,7 @@ export default async function AnalyticsPage({
         back={`/sessions/${id}`}
         backLabel={session.title}
         title="Progress"
-        description="Where you're strong, where to focus next — from your reviews and mock exams."
+        description="Where you're strong and where to focus next, from your reviews and mock exams."
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -84,7 +84,7 @@ export default async function AnalyticsPage({
           </div>
 
           <section className="mt-6">
-            <h2 className="text-base font-semibold">Topics — weakest first</h2>
+            <h2 className="text-base font-semibold">Topics, weakest first</h2>
             {rows.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">
                 No flashcards yet.{" "}
@@ -142,7 +142,7 @@ export default async function AnalyticsPage({
             return (
               <section className="mt-6">
                 <h2 className="text-base font-semibold text-red-700 dark:text-red-400">
-                  Leeches — {leeches.length} card{leeches.length === 1 ? "" : "s"} you keep forgetting
+                  Leeches: {leeches.length} card{leeches.length === 1 ? "" : "s"} you keep forgetting
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Cards with {LEECH_THRESHOLD}+ lapses. Consider rephrasing, splitting, or asking whether you really need this fact.

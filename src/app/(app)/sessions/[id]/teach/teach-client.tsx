@@ -76,7 +76,7 @@ export function TeachClient({
         </select>
 
         <label htmlFor="explanation" className="mt-4 block text-sm font-medium">
-          Teach it back — no peeking
+          Teach it back, no peeking
         </label>
         <textarea
           id="explanation"
@@ -96,7 +96,7 @@ export function TeachClient({
           </button>
           {explanation.trim().length > 0 && explanation.trim().length < 40 && (
             <span className="text-xs text-muted-foreground">
-              keep going — a few sentences at least
+              keep going, a few sentences at least
             </span>
           )}
         </div>

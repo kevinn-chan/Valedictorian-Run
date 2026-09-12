@@ -240,7 +240,7 @@ export default async function Home() {
                         </p>
                       </div>
                       {st.due > 0 && (
-                        <span className="relative z-10 shrink-0 rounded-full bg-primary/12 px-2.5 py-1 text-xs font-semibold tabular-nums text-primary">
+                        <span className="relative z-10 shrink-0 rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold tabular-nums text-primary-strong">
                           {st.due} due
                         </span>
                       )}
@@ -362,7 +362,7 @@ export default async function Home() {
                     <Link
                       href={`/sessions/${t.sessionId}/wiki/${t.slug}`}
                       prefetch={false}
-                      className="group block"
+                      className="group block min-h-6 py-0.5"
                     >
                       <div className="flex items-baseline justify-between gap-2">
                         <span className="min-w-0 flex-1 truncate text-sm transition-colors group-hover:text-primary">

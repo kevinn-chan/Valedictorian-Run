@@ -143,7 +143,7 @@ export function PageHeader({
       {back && (
         <Link
           href={back}
-          className="mb-2 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="mb-2 inline-flex min-h-6 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <span aria-hidden>←</span>
           {backLabel ?? "Back"}
@@ -224,7 +224,7 @@ export function CardCover({
         className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent"
       />
       {page != null && (
-        <span className="absolute right-2 top-2 rounded-md bg-card/85 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground ring-1 ring-border backdrop-blur-sm">
+        <span className="absolute right-2 top-2 rounded-md bg-card px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-foreground/80 ring-1 ring-border backdrop-blur-sm">
           p.{page}
         </span>
       )}

@@ -162,7 +162,7 @@ export default async function AnalyticsPage({
                         <Link
                           href={`/sessions/${id}/wiki/${c.topic_slug}`}
                           prefetch={false}
-                          className="mt-1 text-xs text-muted-foreground hover:text-primary"
+                          className="mt-1 inline-flex min-h-6 items-center text-xs text-muted-foreground hover:text-primary"
                         >
                           {topicMap.get(c.topic_slug)}
                         </Link>

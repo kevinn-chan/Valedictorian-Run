@@ -53,7 +53,7 @@ export function CompileButton({
       <button
         onClick={run}
         disabled={busy}
-        className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
+        className="inline-flex min-h-6 items-center text-xs font-medium text-primary hover:underline disabled:opacity-50"
       >
         {label}
       </button>

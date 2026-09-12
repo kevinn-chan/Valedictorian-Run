@@ -277,7 +277,7 @@ export function ReviewClient({
           />
         )}
         {card.session_title && (
-          <p className="mb-3 text-xs font-medium text-primary/80">
+          <p className="mb-3 text-xs font-medium text-primary">
             {card.session_title}
           </p>
         )}

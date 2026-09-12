@@ -229,7 +229,7 @@ export default async function Home() {
                         <Link
                           href={`/sessions/${s.id}`}
                           prefetch={false}
-                          className="text-[15px] font-semibold leading-snug tracking-tight after:absolute after:inset-0 hover:text-primary"
+                          className="inline-flex min-h-6 items-center text-[15px] font-semibold leading-snug tracking-tight after:absolute after:inset-0 hover:text-primary"
                         >
                           {s.title}
                         </Link>

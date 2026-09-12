@@ -55,7 +55,7 @@ export function FileList({ files, base }: { files: FileRow[]; base: string }) {
               href={`${base}/wiki/${f.id.slice(0, 8)}-digest`}
               prefetch={false}
               title="Open this file's digest"
-              className="min-w-0 flex-1 basis-full truncate text-sm font-medium hover:text-primary sm:basis-auto"
+              className="flex min-h-6 min-w-0 flex-1 basis-full items-center truncate text-sm font-medium hover:text-primary sm:basis-auto"
             >
               {f.name}
             </Link>

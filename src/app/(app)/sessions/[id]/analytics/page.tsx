@@ -88,7 +88,7 @@ export default async function AnalyticsPage({
             {rows.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">
                 No flashcards yet.{" "}
-                <Link href={`/sessions/${id}`} className="font-medium text-primary hover:underline">
+                <Link href={`/sessions/${id}`} className="inline-flex min-h-6 items-center font-medium text-primary hover:underline">
                   Generate cards
                 </Link>{" "}
                 to see per-topic mastery.
@@ -103,7 +103,7 @@ export default async function AnalyticsPage({
                   return (
                     <li key={r.slug} className="rounded-xl px-4 py-3 transition-colors hover:bg-secondary/40">
                       <div className="flex items-center gap-3">
-                        <Link href={href} prefetch={false} className="min-w-0 flex-1 truncate text-sm font-medium hover:text-primary">
+                        <Link href={href} prefetch={false} className="flex min-h-6 min-w-0 flex-1 items-center truncate text-sm font-medium hover:text-primary">
                           {r.title}
                         </Link>
                         <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${s.cls}`}>
@@ -228,7 +228,7 @@ export default async function AnalyticsPage({
             ) : (
               <p className="mt-2 text-sm text-muted-foreground">
                 No attempts yet.{" "}
-                <Link href={`/sessions/${id}/quiz`} className="font-medium text-primary hover:underline">
+                <Link href={`/sessions/${id}/quiz`} className="inline-flex min-h-6 items-center font-medium text-primary hover:underline">
                   Take a mock exam
                 </Link>{" "}
                 to start tracking accuracy.

@@ -50,6 +50,11 @@ const OPTIONS = [
 
 export function MiniQuiz() {
   const [picked, setPicked] = useState<number | null>(null);
+  // A wrong answer used to disable every option permanently: the section that
+  // exists to build confidence handed you a miniature of the exam you are
+  // afraid of and then bolted the door. Wrong answers stay open, and the
+  // explanation is held back until it is an explanation rather than a spoiler.
+  const solved = picked !== null && OPTIONS[picked].correct;
   const done = picked !== null;
   return (
     <div className="flex h-56 flex-col rounded-3xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
@@ -58,17 +63,17 @@ export function MiniQuiz() {
       </p>
       <div className="mt-3 space-y-1.5">
         {OPTIONS.map((o, i) => {
-          const state = !done
-            ? "idle"
-            : o.correct
+          const state = solved
+            ? o.correct
               ? "right"
-              : picked === i
-                ? "wrong"
-                : "dim";
+              : "dim"
+            : picked === i
+              ? "wrong"
+              : "idle";
           return (
             <button
               key={o.label}
-              disabled={done}
+              disabled={solved}
               onClick={() => setPicked(i)}
               className={`flex w-full cursor-pointer items-center justify-between rounded-xl border px-3 py-1.5 text-left text-sm transition-all duration-200 ${
                 state === "idle"
@@ -89,12 +94,14 @@ export function MiniQuiz() {
       </div>
       <p
         aria-hidden={!done}
+        aria-live="polite"
         className={`mt-auto pt-2 text-xs transition-opacity duration-300 ${
           done ? "visible opacity-100" : "invisible opacity-0"
         } text-muted-foreground`}
       >
-        The window halves so old frames can&apos;t masquerade as new ones —
-        p. 28.
+        {solved
+          ? "The window halves so old frames can't masquerade as new ones — p. 28."
+          : "Not that one. Have another go."}
       </p>
     </div>
   );

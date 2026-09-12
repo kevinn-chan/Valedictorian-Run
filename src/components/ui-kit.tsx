@@ -487,9 +487,10 @@ export function Forecast({ cards }: { cards: { due_at: string }[] }) {
   );
 }
 
-/** Read-only glance at the other profile's progress. Kevin/Tina already share
- * one password and can fully switch into each other's account in one click —
- * this isn't a privacy boundary, just a shortcut. */
+/** Read-only glance at the other profile's progress. Both profiles can switch
+ * fully into each other's account in one click (the profile switcher mints a
+ * magic-link token server-side), so this isn't a privacy boundary, just a
+ * shortcut. Sign-in itself is per-person magic links, not a shared password. */
 export function StudyBuddy({
   name,
   streak,

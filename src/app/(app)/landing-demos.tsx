@@ -57,7 +57,7 @@ export function MiniQuiz() {
   const solved = picked !== null && OPTIONS[picked].correct;
   const done = picked !== null;
   return (
-    <div className="flex h-56 flex-col rounded-3xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
+    <div className="flex min-h-56 flex-col rounded-3xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
       <p className="text-sm leading-snug text-foreground">
         Max window size for Selective-Reject ARQ with k-bit sequence numbers?
       </p>

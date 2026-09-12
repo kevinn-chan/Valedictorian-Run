@@ -63,7 +63,7 @@ export function Landing() {
           <ThemeToggle compact />
           <Link
             href="/login"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary/90 active:scale-95"
+            className="btn-squish rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             Sign in
           </Link>
@@ -110,14 +110,14 @@ export function Landing() {
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/login"
-              className="inline-block rounded-2xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary/90 active:scale-95"
+              className="btn-squish inline-block rounded-2xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground hover:bg-primary/90"
               style={{ boxShadow: "var(--shadow-soft)" }}
             >
               Start studying →
             </Link>
             <Link
               href="/demo"
-              className="inline-block rounded-2xl border border-border bg-card px-7 py-3.5 text-base font-semibold text-primary transition hover:-translate-y-0.5 hover:border-primary/50 active:scale-95"
+              className="btn-squish inline-block rounded-2xl border border-border bg-card px-7 py-3.5 text-base font-semibold text-primary hover:border-primary/50"
             >
               Try the live demo
             </Link>
@@ -156,29 +156,33 @@ export function Landing() {
             These are real artifacts from a real Computer Networks deck,
             compiled by the app.
           </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
+          {/* Two things you can poke, then one worked answer. The third item
+              used to be a third identical card that did nothing when clicked --
+              a decoy sitting between two interactive ones. It is an example,
+              so it stops pretending to be a control. */}
+          <div className="mt-8 grid gap-5 sm:grid-cols-2">
             <FlipCard />
             <MiniQuiz />
-            <div className="flex h-56 flex-col rounded-3xl border border-border bg-card p-6" style={{ boxShadow: "var(--shadow-soft)" }}>
-              <p className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <MessageCircleQuestion className="size-3.5" />
-                you ask
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                Why does Go-back-N discard out-of-order frames?
-              </p>
-              <p className="mt-3 border-t border-border pt-3 text-sm leading-relaxed text-foreground/80">
-                The receiver only accepts frames in sequence, so anything after
-                a loss is resent from the error onward{" "}
-                <span className="inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
-                  slides p.14
-                </span>
-              </p>
-              <p className="mt-auto text-xs text-muted-foreground">
-                every answer carries its receipt
-              </p>
-            </div>
           </div>
+          <figure className="mt-5 rounded-2xl border border-border bg-muted/40 px-6 py-5">
+            <figcaption className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <MessageCircleQuestion className="size-3.5" />
+              you ask
+            </figcaption>
+            <p className="mt-1 max-w-2xl text-sm text-foreground">
+              Why does Go-back-N discard out-of-order frames?
+            </p>
+            <p className="mt-3 max-w-3xl border-t border-border pt-3 text-sm leading-relaxed text-foreground/80">
+              The receiver only accepts frames in sequence, so anything after
+              a loss is resent from the error onward{" "}
+              <span className="inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-primary">
+                slides p.14
+              </span>
+            </p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              every answer carries its receipt
+            </p>
+          </figure>
         </section>
 
         {/* Technical thesis */}
@@ -250,7 +254,7 @@ export function Landing() {
             </p>
             <Link
               href="/login"
-              className="mt-7 inline-block rounded-2xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary/90 active:scale-95"
+              className="btn-squish mt-7 inline-block rounded-2xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground hover:bg-primary/90"
               style={{ boxShadow: "var(--shadow-soft)" }}
             >
               Pick your profile →

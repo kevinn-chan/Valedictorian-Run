@@ -79,11 +79,7 @@ export function Landing() {
         <section className="relative mx-auto w-full max-w-5xl overflow-hidden px-6 pb-20 pt-16 text-center">
           <div
             aria-hidden
-            className="pointer-events-none absolute -left-10 top-10 size-48 rounded-[3rem] bg-primary/15 blur-2xl [animation:vr-drift_9s_ease-in-out_infinite]"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-8 bottom-0 size-56 rounded-[4rem] bg-amber-200/40 blur-2xl [animation:vr-drift_11s_ease-in-out_infinite_reverse]"
+            className="pointer-events-none absolute left-24 top-20 size-48 rounded-full bg-primary/15 blur-3xl [animation:vr-drift_9s_ease-in-out_infinite]"
           />
           <p className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="size-3.5" />
@@ -96,13 +92,13 @@ export function Landing() {
               <svg
                 aria-hidden
                 viewBox="0 0 120 8"
-                className="absolute -bottom-1 left-0 w-full"
+                className="absolute -bottom-1 left-0 w-full text-primary/45"
                 preserveAspectRatio="none"
               >
                 <path
                   d="M2 6 C 30 2, 60 7, 118 3"
                   fill="none"
-                  stroke="#a5b4fc"
+                  stroke="currentColor"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />

@@ -129,8 +129,8 @@ export function Landing() {
         </section>
 
         {/* How it works */}
-        <section className="mx-auto w-full max-w-5xl px-6 pb-20">
-          <h2 className="text-center text-2xl font-semibold tracking-tight">
+        <section className="mx-auto w-full max-w-5xl px-6 pb-16">
+          <h2 className="text-3xl font-semibold tracking-tight">
             Three steps, zero busywork
           </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
@@ -153,11 +153,11 @@ export function Landing() {
         </section>
 
         {/* Interactive demo */}
-        <section className="mx-auto w-full max-w-5xl px-6 pb-20">
-          <h2 className="text-center text-2xl font-semibold tracking-tight">
+        <section className="mx-auto w-full max-w-5xl px-6 pb-24">
+          <h2 className="text-3xl font-semibold tracking-tight">
             Don&apos;t take our word for it — poke it
           </h2>
-          <p className="mx-auto mt-2 max-w-md text-center text-sm text-muted-foreground">
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">
             These are real artifacts from a real Computer Networks deck,
             compiled by the app.
           </p>
@@ -192,7 +192,7 @@ export function Landing() {
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-primary">
               The thesis
             </p>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
               RAG is dead — compile instead
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -203,15 +203,15 @@ export function Landing() {
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-2xl font-semibold tabular-nums text-foreground">0</p>
+                <p className="text-lg font-semibold tabular-nums text-foreground">0</p>
                 <p className="mt-1 text-sm text-muted-foreground">vector databases</p>
               </div>
               <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-2xl font-semibold tabular-nums text-foreground">100%</p>
+                <p className="text-lg font-semibold tabular-nums text-foreground">100%</p>
                 <p className="mt-1 text-sm text-muted-foreground">of the corpus in context</p>
               </div>
               <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-2xl font-semibold tabular-nums text-foreground">$0</p>
+                <p className="text-lg font-semibold tabular-nums text-foreground">$0</p>
                 <p className="mt-1 text-sm text-muted-foreground">monthly running cost</p>
               </div>
             </div>
@@ -221,7 +221,7 @@ export function Landing() {
         {/* Learning objectives */}
         <section className="mx-auto w-full max-w-3xl px-6 pb-20">
           <div className="rounded-3xl border border-border bg-card p-8" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <h2 className="text-2xl font-semibold tracking-tight">
+            <h2 className="text-3xl font-semibold tracking-tight">
               By exam day, you will
             </h2>
             <ul className="mt-6 space-y-4">

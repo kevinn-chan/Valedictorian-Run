@@ -1,6 +1,6 @@
 # Design pass — anti-AI-slop
 
-Branch `design-pass-anti-slop`, eleven commits off `main` (`e0490db`).
+Branch `design-pass-anti-slop`, sixteen commits off `main` (`e0490db`).
 Tools: Impeccable 3.9.1 (`audit`, `critique` ×2 targets, bundled detector), Humanizer 3.0.0, puppeteer-core.
 
 **Headline:** the landing page read as AI-generated; the app UI did not. That split drove every decision here. The app's design system is genuinely good — named utilities, semantic shadow tokens, a global focus ring, a global reduced-motion reset — and the landing page used almost none of it.
@@ -83,19 +83,19 @@ These were unreachable in the first pass. They are not any more — see §3.
 | Active nav pill 4.19:1 — needed a theme-aware fix, since a white tint helps dark and breaks light | `sidebar.tsx:68` | `566f825` |
 | Topic rows, export links, recompile buttons, back links, session titles and inline actions all 16–20px tall standalone controls | 8 files | `566f825`, `2c08cb1` |
 | **Wiki index was an unfiltered wall of 60–90 topics** | `wiki/topic-grid.tsx` (new) | `11fb389` |
+| **Geist**, the strongest remaining tell — replaced by Newsreader (h1/h2) + IBM Plex Sans (everything else); Geist Mono deleted, it rendered on zero elements | `layout.tsx`, `globals.css` | `46e5f0a` |
+| The `0 / 100% / $0` hero-metric template, nested inside a card — same copy, now on one baseline with no panels | `landing.tsx:204` | `ece3ec1` |
+| Three consecutive three-across card grids — the steps section is a real sequence, so it is numbered steps on a rule now; card grids 3 → 1 | `landing.tsx:135` | `ece3ec1` |
+| CTA slab was the brightest object on the dark page, with its button inverted against every other primary | `landing.tsx:243` | `ece3ec1` |
+| Quiz locked permanently on a wrong answer, and the explanation fired whether you were right or wrong | `landing-demos.tsx` | `3df71d9` |
+| Exam countdown turned red inside 7 days — an urgency mechanic `PRODUCT.md:57-58` bans by name | `exam-countdown.tsx:74` | `3df71d9` |
+| **Review grade POST had no `res.ok` check and no catch** — a failed save was silent and permanent while the UI had already advanced | `review-client.tsx:84` | `ded7f42` |
+| Compile wait showed a static disabled label for a process documented to run up to 300s | `compile-button.tsx` | `48a4b39` |
 
 ### Deferred — real, deliberately not done
 
 | Finding | Why deferred |
 |---|---|
-| **Geist is the typeface.** The detector's `overused-font` rule, and the single strongest remaining tell: it is what `create-next-app` scaffolds, and this deploys on Vercel. | Typeface is brand identity with a page-wide blast radius. Your call, not a pass-level cleanup. Recommendation below. |
-| **The `0 / 100% / $0` stat trio.** Impeccable's hero-metric template verbatim, nested inside a card (two explicit bans), contradicting `PRODUCT.md`'s own anti-reference "Corporate SaaS dashboard: hero metrics". | The copy can survive as running text or label:value pairs on a baseline; the tile component cannot. That is a structural change and you asked me to preserve structure. Numbers dropped to `text-lg` so they stop competing with the heading. |
-| **Quiz locks permanently on a wrong answer** (`landing-demos.tsx:71`). Hands a stressed student a miniature of the exam they fear, then bolts the door — inside the section meant to build confidence. | One line, but it changes product behaviour, not presentation. |
-| **Exam countdown turns red at 7 days** (`exam-countdown.tsx:74`). `PRODUCT.md:57-58` bans "urgency mechanics" and "red badges screaming for attention". | Whether proximity should be signalled at all is a product call. Note: the accessibility commit gave that red a `dark:` variant, so it is now *more* legible in dark than before. |
-| **Ingest/compile wait has no progress signal.** `uploader.tsx:67` documents runs up to 300s; the user-facing state is a disabled label plus a 4s-polled chip. The first value moment of the product has the thinnest feedback in it. | Additive feature work, not a design pass. |
-| **Review grade POST has no `res.ok` check or catch** (`review-client.tsx:91`). A failed save is silent and permanent; local and server state diverge. | A correctness bug, and you scoped me out of data fetching. **Flagging loudly — this is the most-clicked control in the product.** |
-| **Three consecutive 3-across card grids** on the landing. | Removing the repetition means restructuring three sections. |
-| **CTA slab is the brightest object on the dark page**, and its button is dark-on-light while every other primary is light-on-dark. | Worth doing; needs a colour decision from you about how loud the close should be. |
 | 14 pre-existing `react-hooks` lint errors | Verified identical on `main`. Not mine, not UI. |
 
 ### Rejected — detector findings that were false positives
@@ -123,17 +123,13 @@ These were unreachable in the first pass. They are not any more — see §3.
 
 ## 4. What still reads as AI-generated
 
-The honest list. This pass moved the landing page from "obviously generated" to "competently built", not to "distinctive".
+The honest list, after the second pass.
 
-1. **The typeface.** Geist on a Vercel deploy is the single loudest remaining signal, and nothing else on the page compensates — the only imagery is one blurred circle. Whatever else you do, changing this buys the most. A display serif for headings against a neutral sans for body (Instrument Serif, Newsreader or Fraunces over Inter or the system stack) would move it furthest, because it introduces a contrast axis the page currently has none of. Staying all-sans is fine too; almost anything but Geist.
-2. **The composition is still one idea repeated.** Three consecutive three-across card rows, each card an icon-in-a-rounded-square above a heading above two lines of body. I left-aligned it and gave it a type step, so it is no longer *flat*, but the underlying rhythm is unchanged. Real art direction means some sections not being a card grid.
-3. **The stat trio is still the hero-metric template**, and it is still addressed to an engineer evaluating architecture ("0 vector databases", "$0 monthly running cost") at the exact scroll position where a student decides whether to commit. `PRODUCT.md` says the only audience is two stressed students.
-4. **The close still shouts.** A full-width bright slab after ~4300px of near-black, on a product whose third design principle is "calm under pressure, no urgency mechanics". It is the loudest moment on the page and it is the last thing you see.
-5. **The hero still has no image.** One CSS circle behind centred text is the text-only-plus-decoration pattern. The product's own best asset — real compiled output from a real deck — appears once, in the demo section, and that section is the only part of the page a generator could not have produced.
-6. **The landing still doesn't use its own design system.** I fixed the radius ramp and the shadows, but `section-gap` is still used by no file in the project, and the landing still hand-rolls `hover:-translate-y-0.5 active:scale-95` where `btn-squish` exists. The landing and the app still read as cousins.
-7. **Two stale comments now describe a world that doesn't exist**: `globals.css:6-8` says the app is "committed-light" and `.dark` is "never rendered" (`layout.tsx:35` adds it); `ui-kit.tsx:491` says two users share one password (magic links replaced that). Both will mislead whoever edits next — that is how I lost an hour on the default theme.
-
----
+1. **The composition is better but not distinctive.** The steps are a numbered sequence and the stats are on a baseline, so the page is no longer one component repeated — but the demo row is still a three-across card grid, and that is still the only real composition idea on the page.
+2. **The hero has no image.** One blurred CSS circle behind centred text. The product's best asset — real compiled output from a real deck — appears once, in the demo section, and that section remains the only part a generator could not have produced. It is about 20% of the page.
+3. **The landing still doesn't fully use its own design system.** The radius ramp and shadows are fixed, but `section-gap` is used by no file in the project, and the landing still hand-rolls `hover:-translate-y-0.5 active:scale-95` where `btn-squish` exists.
+4. **Two stale comments describe a world that no longer exists**: `globals.css:6-8` says the app is "committed-light" and `.dark` is "never rendered" (`layout.tsx:35` adds it); `ui-kit.tsx:491` says two users share one password (magic links replaced that). Both will mislead whoever edits next — that is how I lost an hour on the default theme.
+5. **`.shots.mjs` in the repo root is stale** — it signs in by clicking a profile button, which predates the magic-link migration.
 
 ## 5. What went wrong in this pass
 

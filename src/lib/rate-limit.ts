@@ -48,7 +48,22 @@ export async function isRateLimitedDurable(
       p_max: max,
       p_window_seconds: windowSeconds,
     });
-    if (error) return true;
+    if (error) {
+      // The function genuinely not existing is a deploy-ordering state, not an
+      // outage: migrations run in CI on push to main, and Vercel usually wins
+      // that race, so for a minute or two this code is live against a schema
+      // that has not caught up. Failing closed there would lock everyone out of
+      // login for no security benefit — the in-memory gate above already ran
+      // and already said no. Fall back to it. PGRST202 is PostgREST's
+      // "function not found in schema cache".
+      const missing =
+        error.code === "PGRST202" ||
+        /could not find the function/i.test(error.message ?? "");
+      if (missing) return false;
+
+      // Anything else (unreachable, permission denied, timeout) fails closed.
+      return true;
+    }
     return data === true;
   } catch {
     return true;

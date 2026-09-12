@@ -85,7 +85,7 @@ export function Landing() {
             <Sparkles className="size-3.5" />
             Private by design, built for exactly two students
           </p>
-          <h1 className="relative mx-auto mt-6 max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+          <h1 className="relative mx-auto mt-6 max-w-2xl text-4xl font-semibold leading-tight sm:text-5xl">
             Your lecture PDFs,{" "}
             <span className="relative whitespace-nowrap text-primary">
               reborn
@@ -130,7 +130,7 @@ export function Landing() {
 
         {/* How it works */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-16">
-          <h2 className="text-3xl font-semibold tracking-tight">
+          <h2 className="text-3xl font-semibold">
             Three steps, zero busywork
           </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
@@ -154,7 +154,7 @@ export function Landing() {
 
         {/* Interactive demo */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
-          <h2 className="text-3xl font-semibold tracking-tight">
+          <h2 className="text-3xl font-semibold">
             Don&apos;t take our word for it. Poke it.
           </h2>
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
@@ -192,7 +192,7 @@ export function Landing() {
             <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-primary">
               The thesis
             </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
+            <h2 className="mt-4 text-3xl font-semibold text-foreground">
               RAG is dead. Compile instead.
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -221,7 +221,7 @@ export function Landing() {
         {/* Learning objectives */}
         <section className="mx-auto w-full max-w-3xl px-6 pb-20">
           <div className="rounded-3xl border border-border bg-card p-8" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <h2 className="text-3xl font-semibold tracking-tight">
+            <h2 className="text-3xl font-semibold">
               By exam day, you will
             </h2>
             <ul className="mt-6 space-y-4">
@@ -243,7 +243,7 @@ export function Landing() {
         {/* CTA */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
           <div className="rounded-3xl bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)] dark:shadow-[0_20px_60px_-20px_rgba(129,140,248,0.3)]">
-            <h2 className="text-3xl font-semibold tracking-tight text-primary-foreground">
+            <h2 className="text-3xl font-semibold text-primary-foreground">
               Ready to run for valedictorian?
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/80">

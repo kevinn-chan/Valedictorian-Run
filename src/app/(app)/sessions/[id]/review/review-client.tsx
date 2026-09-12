@@ -42,6 +42,7 @@ export function ReviewClient({
   dueTotal?: number;
 }) {
   const [queue, setQueue] = useState(cards);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [reviewed, setReviewed] = useState(0);
   const [grades, setGrades] = useState({ again: 0, good: 0, easy: 0 });
@@ -84,21 +85,37 @@ export function ReviewClient({
   const grade = useCallback(
     async (g: "again" | "good" | "easy") => {
       if (!card || !flipped) return;
+      // The UI advances optimistically, so a failed save has to put everything
+      // back. Without this the grade is lost silently: the card leaves the
+      // queue, the counters move, and the server never hears about it, so the
+      // card's schedule and the screen disagree permanently.
+      const prevQueue = queue;
+      setSaveError(null);
       setFlipped(false);
       setReviewed((n) => n + 1);
       setGrades((prev) => ({ ...prev, [g]: prev[g] + 1 }));
       setQueue((q) => (g === "again" ? [...q.slice(1), card] : q.slice(1)));
-      const res = await fetch("/api/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cardId: card.id, grade: g }),
-      });
-      const data = await res.json();
-      if (data.prev) {
-        setLastGraded({ card, grade: g, prev: data.prev });
+      try {
+        const res = await fetch("/api/review", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cardId: card.id, grade: g }),
+        });
+        if (!res.ok) throw new Error(`review save failed (${res.status})`);
+        const data = await res.json();
+        if (data.prev) {
+          setLastGraded({ card, grade: g, prev: data.prev });
+        }
+      } catch {
+        setQueue(prevQueue);
+        setReviewed((n) => Math.max(0, n - 1));
+        setGrades((prev) => ({ ...prev, [g]: Math.max(0, prev[g] - 1) }));
+        setLastGraded(null);
+        setFlipped(true);
+        setSaveError("That grade didn't save, so the card is still here. Grade it again.");
       }
     },
-    [card, flipped]
+    [card, flipped, queue]
   );
 
   useEffect(() => {
@@ -341,6 +358,15 @@ export function ReviewClient({
           </div>
         )}
       </button>
+
+      {saveError && (
+        <p
+          role="alert"
+          className="mt-3 rounded-lg border border-red-200 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:border-red-500/30 dark:text-red-400"
+        >
+          {saveError}
+        </p>
+      )}
 
       {flipped ? (
         <div className="mt-3 flex gap-2 animate-slide-up">

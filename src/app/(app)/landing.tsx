@@ -3,7 +3,6 @@ import {
   BadgeCheck,
   BookOpenCheck,
   CalendarRange,
-  FileUp,
   GraduationCap,
   Layers,
   MessageCircleQuestion,
@@ -38,17 +37,14 @@ const OBJECTIVES = [
 
 const STEPS = [
   {
-    Icon: FileUp,
     title: "Drop your PDFs",
     body: "Lecture decks, scribbled notes, cheatsheets. Drag them in and that's the last filing you'll ever do.",
   },
   {
-    Icon: Sparkles,
     title: "We compile them",
     body: "Every page becomes a wiki of topics, formulas and exam traps. Nothing is dropped, and every claim is stamped to its page.",
   },
   {
-    Icon: GraduationCap,
     title: "You master them",
     body: "Cue cards, mock exams, teach-back grading and a chat that answers with receipts. Study, don't re-read.",
   },
@@ -133,23 +129,22 @@ export function Landing() {
           <h2 className="text-3xl font-semibold">
             Three steps, zero busywork
           </h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            {STEPS.map(({ Icon, title, body }) => (
-              <div
-                key={title}
-                className="rounded-3xl border border-border bg-card p-6 transition duration-200 hover:-translate-y-1"
-                style={{ boxShadow: "var(--shadow-soft)" }}
-              >
-                <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-secondary">
-                  <Icon className="size-5 text-primary" />
+          <ol className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-3">
+            {STEPS.map(({ title, body }, i) => (
+              <li key={title} className="border-t border-border pt-4">
+                <span
+                  aria-hidden
+                  className="font-serif text-sm tabular-nums text-primary"
+                >
+                  {i + 1}
                 </span>
-                <h3 className="mt-4 text-base font-semibold">{title}</h3>
+                <h3 className="mt-2 text-base font-semibold">{title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                   {body}
                 </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </section>
 
         {/* Interactive demo */}
@@ -201,20 +196,20 @@ export function Landing() {
               so every page becomes structured knowledge and every claim is
               stamped to its source. Zero retrieval latency. Zero relevance tuning. Zero drift.
             </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-lg font-semibold tabular-nums text-foreground">0</p>
-                <p className="mt-1 text-sm text-muted-foreground">vector databases</p>
-              </div>
-              <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-lg font-semibold tabular-nums text-foreground">100%</p>
-                <p className="mt-1 text-sm text-muted-foreground">of the corpus in context</p>
-              </div>
-              <div className="rounded-2xl bg-secondary/50 p-5">
-                <p className="text-lg font-semibold tabular-nums text-foreground">$0</p>
-                <p className="mt-1 text-sm text-muted-foreground">monthly running cost</p>
-              </div>
-            </div>
+            <ul className="mt-7 flex flex-wrap items-baseline gap-x-10 gap-y-2.5 border-t border-border pt-5">
+              <li className="flex items-baseline gap-2">
+                <span className="text-base font-semibold tabular-nums text-foreground">0</span>
+                <span className="text-sm text-muted-foreground">vector databases</span>
+              </li>
+              <li className="flex items-baseline gap-2">
+                <span className="text-base font-semibold tabular-nums text-foreground">100%</span>
+                <span className="text-sm text-muted-foreground">of the corpus in context</span>
+              </li>
+              <li className="flex items-baseline gap-2">
+                <span className="text-base font-semibold tabular-nums text-foreground">$0</span>
+                <span className="text-sm text-muted-foreground">monthly running cost</span>
+              </li>
+            </ul>
           </div>
         </section>
 
@@ -242,17 +237,21 @@ export function Landing() {
 
         {/* CTA */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
-          <div className="rounded-3xl bg-gradient-to-br from-primary to-primary/90 px-8 py-14 text-center shadow-[0_20px_60px_-20px_rgba(79,70,229,0.55)] dark:shadow-[0_20px_60px_-20px_rgba(129,140,248,0.3)]">
-            <h2 className="text-3xl font-semibold text-primary-foreground">
+          <div
+            className="rounded-3xl border border-primary/25 bg-card px-8 py-14 text-center"
+            style={{ boxShadow: "var(--shadow-soft)" }}
+          >
+            <h2 className="text-3xl font-semibold text-foreground">
               Ready to run for valedictorian?
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/80">
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
               Two seats, zero subscriptions, zero vector databases. Your
               materials stay yours. They just learn to fight back.
             </p>
             <Link
               href="/login"
-              className="mt-7 inline-block rounded-2xl bg-card px-7 py-3.5 text-base font-semibold text-primary transition hover:-translate-y-0.5 active:scale-95"
+              className="mt-7 inline-block rounded-2xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary/90 active:scale-95"
+              style={{ boxShadow: "var(--shadow-soft)" }}
             >
               Pick your profile →
             </Link>

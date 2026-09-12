@@ -31,7 +31,7 @@ export default async function LoginPage({
 
         {profiles.length === 0 && (
           <p className="mt-6 text-sm text-red-600 dark:text-red-400">
-            No profiles configured — set the PROFILES env var.
+            No profiles configured. Set the PROFILES env var.
           </p>
         )}
       </div>

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Valedictorian Run",
   description:
-    "Your course materials, compiled into a study system — summaries, plans, cue cards, and cited answers.",
+    "Your course materials, compiled into a study system: summaries, plans, cue cards, and cited answers.",
 };
 
 export default function RootLayout({

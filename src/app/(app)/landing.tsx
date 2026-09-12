@@ -16,7 +16,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 const OBJECTIVES = [
   {
     Icon: BookOpenCheck,
-    text: "Recall every definition and formula — with the page it lives on",
+    text: "Recall every definition and formula, with the page it lives on",
   },
   {
     Icon: CalendarRange,
@@ -24,11 +24,11 @@ const OBJECTIVES = [
   },
   {
     Icon: Layers,
-    text: "Remember it next month, not just tonight — spaced repetition does the nagging",
+    text: "Remember it next month, not just tonight. Spaced repetition does the nagging",
   },
   {
     Icon: Presentation,
-    text: "Find your gaps by teaching back — graded against your own materials",
+    text: "Find your gaps by teaching back, graded against your own materials",
   },
   {
     Icon: GraduationCap,
@@ -40,12 +40,12 @@ const STEPS = [
   {
     Icon: FileUp,
     title: "Drop your PDFs",
-    body: "Lecture decks, scribbled notes, cheatsheets — drag them in and that's the last filing you'll ever do.",
+    body: "Lecture decks, scribbled notes, cheatsheets. Drag them in and that's the last filing you'll ever do.",
   },
   {
     Icon: Sparkles,
     title: "We compile them",
-    body: "Every page becomes a wiki of topics, formulas and exam traps — every word kept, every claim page-stamped.",
+    body: "Every page becomes a wiki of topics, formulas and exam traps. Nothing is dropped, and every claim is stamped to its page.",
   },
   {
     Icon: GraduationCap,
@@ -83,7 +83,7 @@ export function Landing() {
           />
           <p className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="size-3.5" />
-            Private by design — built for exactly two students
+            Private by design, built for exactly two students
           </p>
           <h1 className="relative mx-auto mt-6 max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
             Your lecture PDFs,{" "}
@@ -108,7 +108,7 @@ export function Landing() {
           </h1>
           <p className="relative mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
             Drop in a semester of slides. Get a browsable wiki, cue cards, mock
-            exams, a study plan — and answers that always show the page they
+            exams, a study plan, and answers that always show the page they
             came from.
           </p>
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -155,7 +155,7 @@ export function Landing() {
         {/* Interactive demo */}
         <section className="mx-auto w-full max-w-5xl px-6 pb-24">
           <h2 className="text-3xl font-semibold tracking-tight">
-            Don&apos;t take our word for it — poke it
+            Don&apos;t take our word for it. Poke it.
           </h2>
           <p className="mt-2 max-w-md text-sm text-muted-foreground">
             These are real artifacts from a real Computer Networks deck,
@@ -193,13 +193,13 @@ export function Landing() {
               The thesis
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
-              RAG is dead — compile instead
+              RAG is dead. Compile instead.
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               Most study tools retrieve chunks at query time, hoping the right
-              fragment lands in context. We compile the entire corpus at ingest —
-              every page becomes structured knowledge, every claim stamped to its
-              source. Zero retrieval latency. Zero relevance tuning. Zero drift.
+              fragment lands in context. We compile the entire corpus at ingest,
+              so every page becomes structured knowledge and every claim is
+              stamped to its source. Zero retrieval latency. Zero relevance tuning. Zero drift.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl bg-secondary/50 p-5">
@@ -248,7 +248,7 @@ export function Landing() {
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/80">
               Two seats, zero subscriptions, zero vector databases. Your
-              materials stay yours — they just learn to fight back.
+              materials stay yours. They just learn to fight back.
             </p>
             <Link
               href="/login"
@@ -261,7 +261,7 @@ export function Landing() {
       </main>
 
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-        Valedictorian Run — a corpus-first study system for two.
+        Valedictorian Run. A corpus-first study system for two.
       </footer>
     </div>
   );

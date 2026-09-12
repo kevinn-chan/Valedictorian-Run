@@ -53,8 +53,6 @@ const STEPS = [
 export function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <style>{`@keyframes vr-drift { 0%,100% { transform: translate(0,0) } 50% { transform: translate(14px,-18px) } }`}</style>
-
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
         <p className="text-sm font-semibold tracking-tight">
           <span className="text-primary">●</span> Valedictorian Run
@@ -72,16 +70,12 @@ export function Landing() {
 
       <main>
         {/* Hero */}
-        <section className="relative mx-auto w-full max-w-5xl overflow-hidden px-6 pb-20 pt-16 text-center">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-24 top-20 size-48 rounded-full bg-primary/15 blur-3xl [animation:vr-drift_9s_ease-in-out_infinite]"
-          />
-          <p className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-primary">
+        <section className="mx-auto w-full max-w-5xl px-6 pb-20 pt-16 text-center">
+          <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="size-3.5" />
             Private by design, built for exactly two students
           </p>
-          <h1 className="relative mx-auto mt-6 max-w-2xl text-4xl font-semibold leading-tight sm:text-5xl">
+          <h1 className="mx-auto mt-6 max-w-2xl text-4xl font-semibold leading-tight sm:text-5xl">
             Your lecture PDFs,{" "}
             <span className="relative whitespace-nowrap text-primary">
               reborn
@@ -102,7 +96,7 @@ export function Landing() {
             </span>{" "}
             as a study system
           </h1>
-          <p className="relative mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
             Drop in a semester of slides. Get a browsable wiki, cue cards, mock
             exams, a study plan, and answers that always show the page they
             came from.

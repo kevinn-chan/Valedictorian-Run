@@ -193,7 +193,7 @@ export function ReviewClient({
     return (
       <div className="mt-12 flex flex-col items-center text-center animate-slide-up">
         <div className="flex size-16 items-center justify-center rounded-full bg-green-500/15">
-          <CheckCircle2 className="size-8 text-green-600" />
+          <CheckCircle2 className="size-8 text-green-600 dark:text-green-400" />
         </div>
         <h2 className="mt-4 text-xl font-semibold">
           {total ? "Session complete" : "Nothing due"}
@@ -346,10 +346,10 @@ export function ReviewClient({
         <div className="mt-3 flex gap-2 animate-slide-up">
           <button
             onClick={() => grade("again")}
-            className="btn-squish flex-1 rounded-lg border border-red-200 bg-red-500/10 px-3 py-2.5 text-sm font-medium text-red-700 hover:bg-red-500/20"
+            className="btn-squish flex-1 rounded-lg border border-red-200 dark:border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm font-medium text-red-700 dark:text-red-400 hover:bg-red-500/20"
           >
             Again
-            <span className="ml-1.5 text-xs font-normal text-red-600/70">
+            <span className="ml-1.5 text-xs font-normal text-red-600/70 dark:text-red-400/70">
               1 · {intervalLabel(card, "again")}
             </span>
           </button>
@@ -364,10 +364,10 @@ export function ReviewClient({
           </button>
           <button
             onClick={() => grade("easy")}
-            className="btn-squish flex-1 rounded-lg border border-green-200 bg-green-500/10 px-3 py-2.5 text-sm font-medium text-green-700 hover:bg-green-500/20"
+            className="btn-squish flex-1 rounded-lg border border-green-200 dark:border-green-500/30 bg-green-500/10 px-3 py-2.5 text-sm font-medium text-green-700 dark:text-green-400 hover:bg-green-500/20"
           >
             Easy
-            <span className="ml-1.5 text-xs font-normal text-green-600/70">
+            <span className="ml-1.5 text-xs font-normal text-green-600/70 dark:text-green-400/70">
               3 · {intervalLabel(card, "easy")}
             </span>
           </button>

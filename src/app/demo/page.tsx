@@ -42,7 +42,7 @@ export default async function DemoPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
+        <Link href="/" className="inline-flex min-h-6 items-center text-sm font-semibold tracking-tight">
           <span className="text-primary">●</span> Valedictorian Run
         </Link>
         <div className="flex items-center gap-2">

@@ -50,7 +50,7 @@ export function StudyPlanForm({ initialFocus, hasPlan }: { initialFocus: string;
           Interleaving your courses by exam date and mastery gaps — up to a minute.
         </p>
       )}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
     </form>
   );
 }

@@ -7,9 +7,9 @@ import { LEECH_THRESHOLD } from "@/lib/srs";
 import { PageHeader, ProgressRing, Sparkline, StatTile } from "@/components/ui-kit";
 
 const STATUS = {
-  weak: { label: "Needs work", cls: "bg-red-500/12 text-red-700", bar: "bg-red-500" },
-  learning: { label: "Learning", cls: "bg-amber-500/15 text-amber-700", bar: "bg-amber-500" },
-  solid: { label: "Solid", cls: "bg-emerald-500/12 text-emerald-700", bar: "bg-emerald-500" },
+  weak: { label: "Needs work", cls: "bg-red-500/12 text-red-700 dark:text-red-400", bar: "bg-red-500" },
+  learning: { label: "Learning", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400", bar: "bg-amber-500" },
+  solid: { label: "Solid", cls: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400", bar: "bg-emerald-500" },
   unstudied: { label: "Not started", cls: "bg-secondary text-muted-foreground", bar: "bg-muted-foreground/30" },
 } as const;
 
@@ -213,7 +213,7 @@ export default async function AnalyticsPage({
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-semibold tabular-nums tracking-tight text-emerald-600">
+                    <div className="text-2xl font-semibold tabular-nums tracking-tight text-emerald-600 dark:text-emerald-400">
                       {Math.round(trend.best * 100)}%
                     </div>
                     <div className="text-xs text-muted-foreground">best</div>

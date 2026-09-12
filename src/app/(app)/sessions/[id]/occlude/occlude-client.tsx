@@ -345,7 +345,7 @@ function Editor({
                       return next;
                     });
                   }}
-                  className="text-xs text-muted-foreground hover:text-red-600"
+                  className="text-xs text-muted-foreground hover:text-red-600 dark:text-red-400"
                 >
                   remove
                 </button>

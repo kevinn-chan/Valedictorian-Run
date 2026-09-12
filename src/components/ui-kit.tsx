@@ -369,7 +369,7 @@ export function ReviewHeatmap({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <Flame
-            className={`size-4 ${streak > 0 ? "text-orange-500" : "text-muted-foreground"}`}
+            className={`size-4 ${streak > 0 ? "text-orange-500 dark:text-orange-400" : "text-muted-foreground"}`}
           />
           <span className="text-sm font-semibold">
             {streak} day{streak === 1 ? "" : "s"}
@@ -523,7 +523,7 @@ export function StudyBuddy({
           <div className="mt-3 flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Flame
-                className={`size-3.5 ${streak > 0 ? "text-orange-500" : ""}`}
+                className={`size-3.5 ${streak > 0 ? "text-orange-500 dark:text-orange-400" : ""}`}
               />
               {streak} day{streak === 1 ? "" : "s"}
             </span>

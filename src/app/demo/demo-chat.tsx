@@ -97,6 +97,7 @@ export function DemoChat({ starters }: { starters: string[] }) {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          aria-label="Ask a question about this course"
           placeholder="Ask anything from the notes above…"
           className="h-11 flex-1 rounded-xl border border-border bg-background px-3.5 text-sm text-foreground outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-ring/25"
         />

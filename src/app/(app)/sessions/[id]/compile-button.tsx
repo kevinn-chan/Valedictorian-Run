@@ -46,7 +46,7 @@ export function CompileButton({
   return (
     <span className="flex items-center gap-2">
       {err && (
-        <span className="max-w-[28rem] truncate text-xs text-red-600" title={err}>
+        <span className="max-w-[28rem] truncate text-xs text-red-600 dark:text-red-400" title={err}>
           {err}
         </span>
       )}

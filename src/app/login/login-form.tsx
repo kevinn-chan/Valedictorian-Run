@@ -82,7 +82,7 @@ export function LoginForm({
         ))}
       </div>
 
-      {error && <p className="mt-6 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-6 text-sm text-red-600 dark:text-red-400">{error}</p>}
       {sending && <p className="mt-6 text-sm text-muted-foreground">Sending link…</p>}
     </>
   );

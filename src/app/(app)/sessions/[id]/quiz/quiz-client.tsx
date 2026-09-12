@@ -66,7 +66,7 @@ export function QuizClient({
         >
           {busy ? "Writing your exam…" : "Start mock exam"}
         </button>
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
         {history.length > 0 && (
           <section className="mt-8 card-soft p-5">

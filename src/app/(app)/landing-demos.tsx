@@ -9,7 +9,7 @@ export function FlipCard() {
   return (
     <button
       onClick={() => setFlipped((f) => !f)}
-      aria-label={flipped ? "Show question" : "Reveal answer"}
+      aria-expanded={flipped}
       className="group h-56 w-full cursor-pointer [perspective:1200px]"
     >
       <span
@@ -17,7 +17,7 @@ export function FlipCard() {
           flipped ? "[transform:rotateY(180deg)]" : ""
         }`}
       >
-        <span className="absolute inset-0 flex flex-col justify-between rounded-3xl border border-border bg-card p-6 text-left [backface-visibility:hidden]" style={{ boxShadow: "var(--shadow-soft)" }}>
+        <span aria-hidden={flipped} className="absolute inset-0 flex flex-col justify-between rounded-3xl border border-border bg-card p-6 text-left [backface-visibility:hidden]" style={{ boxShadow: "var(--shadow-soft)" }}>
           <span className="text-sm leading-relaxed text-foreground">
             What are the two types of transmission errors at the Data Link
             Layer?
@@ -27,12 +27,12 @@ export function FlipCard() {
             tap to flip
           </span>
         </span>
-        <span className="absolute inset-0 flex flex-col justify-between rounded-3xl bg-primary p-6 text-left [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ boxShadow: "var(--shadow-soft)" }}>
+        <span aria-hidden={!flipped} className="absolute inset-0 flex flex-col justify-between rounded-3xl bg-primary p-6 text-left [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ boxShadow: "var(--shadow-soft)" }}>
           <span className="text-sm leading-relaxed text-primary-foreground">
             Lost frames — never arrive at all — and damaged frames, received
             with bits in error.
           </span>
-          <span className="text-xs font-medium text-primary-foreground/70">
+          <span className="text-xs font-medium text-primary-foreground/85">
             straight from p. 2 of the deck
           </span>
         </span>
@@ -88,8 +88,9 @@ export function MiniQuiz() {
         })}
       </div>
       <p
+        aria-hidden={!done}
         className={`mt-auto pt-2 text-xs transition-opacity duration-300 ${
-          done ? "opacity-100" : "opacity-0"
+          done ? "visible opacity-100" : "invisible opacity-0"
         } text-muted-foreground`}
       >
         The window halves so old frames can&apos;t masquerade as new ones —

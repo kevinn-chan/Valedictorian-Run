@@ -16,9 +16,12 @@ export function isRateLimited(
 ): boolean {
   const now = Date.now();
   const recent = (attempts.get(key) ?? []).filter((t) => now - t < windowMs);
-  recent.push(now);
+  // Only allowed attempts are recorded. Counting refusals too would let anyone
+  // hold a key shut indefinitely by retrying inside the window.
+  const limited = recent.length >= max;
+  if (!limited) recent.push(now);
   attempts.set(key, recent);
-  return recent.length > max;
+  return limited;
 }
 
 /**

@@ -30,6 +30,18 @@ for (let i = 0; i < 8; i++) {
   assert.equal(isRateLimited(k3, 1, 0), false, "a zero-length window never limits");
 }
 
+// Refused attempts are not recorded, so retrying while limited cannot keep a
+// key shut. With a 50ms window: fill it, hammer it while limited, then once the
+// allowed attempts age out the key opens — regardless of the refusals.
+const k4 = `check4:${Math.random()}`;
+assert.equal(isRateLimited(k4, 2, 50), false);
+assert.equal(isRateLimited(k4, 2, 50), false);
+const until = Date.now() + 40;
+while (Date.now() < until) assert.equal(isRateLimited(k4, 2, 50), true, "limited while the window is full");
+const reopen = Date.now() + 15;
+while (Date.now() < reopen) { /* let the two allowed attempts age out */ }
+assert.equal(isRateLimited(k4, 2, 50), false, "refusals did not extend the lockout");
+
 // The window is per-key and not shared with the default one used above.
 assert.equal(isRateLimited(k, 100, 60_000), false, "a higher cap on the same key passes");
 

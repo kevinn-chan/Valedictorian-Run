@@ -31,9 +31,9 @@ create index if not exists rate_limits_at_idx on public.rate_limits (at);
 -- (which bypasses RLS). anon and authenticated get nothing.
 alter table public.rate_limits enable row level security;
 
--- Records one attempt against `p_key` and reports whether that key has now
--- exceeded `p_max` attempts inside `p_window_seconds`. Counting and inserting
--- happen in one statement-pair under a per-key transaction lock, so two
+-- Reports whether `p_key` has already used its `p_max` attempts inside
+-- `p_window_seconds`, and records the attempt only when it is allowed.
+-- Counting and inserting happen under a per-key transaction lock, so two
 -- concurrent requests cannot both read an under-limit count and both pass.
 create or replace function public.check_rate_limit(
   p_key text,
@@ -59,10 +59,18 @@ begin
    where key = p_key
      and at < now() - make_interval(secs => p_window_seconds);
 
-  insert into public.rate_limits (key) values (p_key);
-
   select count(*) into n from public.rate_limits where key = p_key;
-  return n > p_max;
+
+  -- Record only attempts that are let through. Inserting refusals too meant a
+  -- key under the limit could be held shut forever: one request per window
+  -- from anywhere kept a profile unable to sign in, which is the very lockout
+  -- this migration exists to prevent.
+  if n >= p_max then
+    return true;
+  end if;
+
+  insert into public.rate_limits (key) values (p_key);
+  return false;
 end;
 $$;
 

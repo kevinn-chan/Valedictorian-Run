@@ -18,7 +18,7 @@ export const metadata = {
 export default async function DemoPage() {
   if (!DEMO_SESSION_ID) notFound();
   const sb = demoReader();
-  const [{ data: session }, { data: pages }, { data: sampleCards }] = await Promise.all([
+  const [{ data: session }, { data: pages }, { data: sampleCards }, { data: files }] = await Promise.all([
     sb.from("sessions").select("title").eq("id", DEMO_SESSION_ID).single(),
     sb
       .from("wiki_pages")
@@ -30,11 +30,30 @@ export default async function DemoPage() {
       .select("front, back")
       .eq("session_id", DEMO_SESSION_ID)
       .limit(5),
+    sb.from("files").select("id, name").eq("session_id", DEMO_SESSION_ID),
   ]);
   if (!session) notFound();
 
   const topics = (pages ?? []).filter((p) => p.kind === "topic");
   const digests = (pages ?? []).filter((p) => p.kind === "file_digest");
+  // Each file compiles its own topics, so overlapping lectures produce
+  // near-identical titles ("Bayesian Classification & MAP Decision Rule" vs
+  // "…and MAP Rule"). Grouping by source file makes that read as two lectures
+  // covering the same idea, and makes the per-file page ranges meaningful.
+  const fileIdOf = (p: { source_refs: unknown }) =>
+    (p.source_refs as { file_id?: string } | null)?.file_id;
+  const groups = [...(files ?? [])]
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+    .map((f) => ({
+      file: f,
+      topics: topics.filter((t) => fileIdOf(t) === f.id),
+      digest: digests.find((d) => fileIdOf(d) === f.id),
+    }))
+    .filter((g) => g.topics.length || g.digest);
+  const grouped = new Set(groups.flatMap((g) => g.topics));
+  const ungrouped = topics.filter((t) => !grouped.has(t));
+  const sections: { file: { id: string; name: string } | null; topics: typeof topics; digest?: (typeof digests)[number] }[] =
+    ungrouped.length ? [...groups, { file: null, topics: ungrouped }] : groups;
   const starters = topics
     .slice(0, 3)
     .map((t) => `Explain ${t.title} like I missed that lecture`);
@@ -42,7 +61,7 @@ export default async function DemoPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
+        <Link href="/" className="inline-flex min-h-6 items-center text-sm font-semibold tracking-tight">
           <span className="text-primary">●</span> Valedictorian Run
         </Link>
         <div className="flex items-center gap-2">
@@ -60,13 +79,13 @@ export default async function DemoPage() {
         <section className="text-center">
           <p className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="size-3.5" />
-            Live read-only demo — no sign-in
+            Live read-only demo, no sign-in
           </p>
           <h1 className="mx-auto mt-5 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             One course, already compiled into a study system
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            This is a real sample — <strong>{session.title}</strong> — that the app turned
+            This is a real sample, <strong>{session.title}</strong>, that the app turned
             into a topic wiki and a corpus you can question. Browse the notes, then ask it
             anything below. In the full app you drop in your <em>own</em> materials.
           </p>
@@ -82,59 +101,69 @@ export default async function DemoPage() {
               The compiled wiki
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Every topic below was written by the app from the source notes — with page
+              Every topic below was written by the app from the source notes, with page
               citations.
             </p>
-            <ul className="mt-4 space-y-2">
-              {topics.map((t) => {
-                const refPages = (t.source_refs as { pages?: number[] } | null)
-                  ?.pages;
-                return (
-                  <li key={t.slug}>
-                    <Link
-                      href={`/demo/${t.slug}`}
-                      prefetch={false}
-                      className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/50"
-                    >
-                      <BookOpen className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
-                      <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">
-                        {t.title}
-                      </span>
-                      {refPages && refPages.length > 0 && (
-                        <span className="text-xs text-muted-foreground">
-                          p. {Math.min(...refPages)}–{Math.max(...refPages)}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-              {digests.map((d) => (
-                <li key={d.slug}>
-                  <Link
-                    href={`/demo/${d.slug}`}
-                    prefetch={false}
-                    className="group flex items-center gap-3 rounded-2xl border border-dashed border-border bg-card px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/50"
-                  >
-                    <FileText className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">
-                      {d.title} — full digest
-                    </span>
-                  </Link>
-                </li>
+            <div className="mt-4 space-y-5">
+              {sections.map((g) => (
+                <div key={g.file?.id ?? "other"}>
+                  <h3 className="truncate text-xs font-medium text-muted-foreground">
+                    {g.file?.name ?? "Other"}
+                  </h3>
+                  <ul className="mt-2 space-y-2">
+                    {g.topics.map((t) => {
+                      const refPages = (t.source_refs as { pages?: number[] } | null)?.pages;
+                      const lo = refPages?.length ? Math.min(...refPages) : null;
+                      const hi = refPages?.length ? Math.max(...refPages) : null;
+                      return (
+                        <li key={t.slug}>
+                          <Link
+                            href={`/demo/${t.slug}`}
+                            prefetch={false}
+                            className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/50"
+                          >
+                            <BookOpen className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
+                            <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">
+                              {t.title}
+                            </span>
+                            {lo !== null && (
+                              <span className="shrink-0 text-xs text-muted-foreground">
+                                p. {lo === hi ? lo : `${lo}–${hi}`}
+                              </span>
+                            )}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                    {g.digest && (
+                      <li>
+                        <Link
+                          href={`/demo/${g.digest.slug}`}
+                          prefetch={false}
+                          className="group flex items-center gap-3 rounded-2xl border border-dashed border-border bg-card px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/50"
+                        >
+                          <FileText className="size-4 shrink-0 text-muted-foreground transition group-hover:text-primary" />
+                          <span className="min-w-0 flex-1 truncate text-sm font-medium group-hover:text-primary">
+                            Full digest of this file
+                          </span>
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
 
           {/* Live chat */}
           <section className="min-w-0">
             <h2 className="text-sm font-semibold text-foreground">Ask the corpus</h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Grounded, cited answers — or an honest &ldquo;that isn&rsquo;t in the
+              Grounded, cited answers, or an honest &ldquo;that isn&rsquo;t in the
               materials.&rdquo;
             </p>
             <div className="mt-4">
-              <DemoChat starters={starters} />
+              <DemoChat starters={starters} files={files ?? []} />
             </div>
           </section>
         </div>
@@ -145,7 +174,7 @@ export default async function DemoPage() {
               Try a flashcard
             </h2>
             <p className="mt-1 text-center text-xs text-muted-foreground">
-              Same cards the app generated from this course — flip through a few.
+              Same cards the app generated from this course. Flip through a few.
             </p>
             <div className="mt-4">
               <DemoFlashcards cards={sampleCards} />
@@ -154,14 +183,14 @@ export default async function DemoPage() {
         )}
 
         <section
-          className="mt-16 rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/80 px-8 py-12 text-center"
+          className="mt-16 rounded-3xl bg-gradient-to-br from-primary to-primary/80 px-8 py-12 text-center"
           style={{ boxShadow: "var(--shadow-soft-hover)" }}
         >
           <h2 className="text-2xl font-semibold tracking-tight text-primary-foreground">
             Want it for your own notes?
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-primary-foreground/80">
-            The whole thing is open source — deploy your own in a few minutes.
+            The whole thing is open source. Deploy your own in a few minutes.
           </p>
           <a
             href="https://github.com/kevinn-chan/Valedictorian-Run-Demo"

@@ -1,4 +1,4 @@
-import ReactMarkdown from "react-markdown";
+import { PlanMarkdown } from "@/components/plan-markdown";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui-kit";
 import { StudyPlanForm } from "./study-plan-form";
@@ -39,7 +39,7 @@ export default async function StudyPlanPage() {
 
       {!sessions?.length ? (
         <p className="text-sm text-muted-foreground">
-          No sessions yet — add a course and compile it first.
+          No sessions yet. Add a course and compile it first.
         </p>
       ) : (
         <>
@@ -47,7 +47,7 @@ export default async function StudyPlanPage() {
 
           {plan?.generated_at && staleDays(plan.generated_at) > 7 && (
             <p className="mt-6 rounded-xl border border-amber-600/40 bg-amber-500/10 px-4 py-3 text-sm text-foreground">
-              {`This plan was generated ${staleDays(plan.generated_at)} days ago and covers a week that has passed — regenerate it for a current schedule. Courses you have since added or removed won't appear.`}
+              {`This plan was generated ${staleDays(plan.generated_at)} days ago and covers a week that has passed. Regenerate it for a current schedule. Courses you have since added or removed won't appear.`}
             </p>
           )}
 
@@ -56,11 +56,11 @@ export default async function StudyPlanPage() {
               className="prose mt-8 max-w-none rounded-2xl border bg-card p-6 text-sm leading-relaxed sm:p-8 [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1"
               style={{ boxShadow: "var(--shadow-soft)" }}
             >
-              <ReactMarkdown>{plan.markdown}</ReactMarkdown>
+              <PlanMarkdown markdown={plan.markdown} />
             </article>
           ) : (
             <p className="mt-10 text-sm text-muted-foreground">
-              No plan yet. Generate one — it schedules only topics that actually
+              No plan yet. Generate one: it schedules only topics that actually
               exist in your courses&apos; corpus wikis.
             </p>
           )}

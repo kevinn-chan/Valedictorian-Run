@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { PageViewer } from "./page-viewer";
+import { PageViewer } from "@/components/page-viewer";
 
 // ponytail: LLM prompt says "use Unicode, not LaTeX" but some slip through.
 // String replace at render beats adding remark-math + rehype-katex.
@@ -80,9 +80,13 @@ export function MarkdownView({
           })}
         </div>
       )}
-      <article className="prose mt-4 max-w-none text-sm leading-relaxed dark:prose-invert [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:my-1">
+      <article className="prose mt-4 max-w-none text-sm leading-relaxed dark:prose-invert [&_h2]:text-lg [&_h3]:text-base [&_h4]:text-sm [&_li]:my-1">
         <ReactMarkdown
           components={{
+            // The page owns the only <h1>; markdown headings start one level down.
+            h1: ({ children }) => <h2>{children}</h2>,
+            h2: ({ children }) => <h3>{children}</h3>,
+            h3: ({ children }) => <h4>{children}</h4>,
             a: ({ href, children }) => {
               const page = fileId && href?.startsWith("#cite-") ? Number(href.slice(6)) : null;
               if (page) {

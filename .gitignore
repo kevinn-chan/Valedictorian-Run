@@ -45,3 +45,10 @@ next-env.d.ts
 .superpowers/
 .worktrees/
 supabase/.temp/
+
+# Working notes kept locally, never committed: HANDOFF.md carries both users'
+# real email addresses in plain text, and this repo is public. Untracked across
+# ~13 sessions already — this makes that intent enforced rather than remembered.
+HANDOFF.md
+HANDOFF-archive.md
+CHECKPOINTS.md

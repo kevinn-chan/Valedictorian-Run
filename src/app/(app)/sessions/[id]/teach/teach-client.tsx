@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Check, Circle, X } from "lucide-react";
+import { PageViewer } from "@/components/page-viewer";
 
 interface Topic {
   slug: string;
@@ -15,6 +16,7 @@ interface Grade {
   strengths: string[];
   corrections: { claim: string; fix: string; page: number }[];
   missing: { point: string; page: number }[];
+  fileId: string | null;
 }
 
 export function TeachClient({
@@ -29,6 +31,21 @@ export function TeachClient({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [grade, setGrade] = useState<Grade | null>(null);
+  const [openPage, setOpenPage] = useState<number | null>(null);
+
+  // Page citations open the source page inline, same as wiki and chat chips.
+  const cite = (page: number) =>
+    grade?.fileId ? (
+      <button
+        type="button"
+        onClick={() => setOpenPage(page)}
+        className="text-xs text-primary underline decoration-dotted underline-offset-2 hover:decoration-solid"
+      >
+        (p. {page})
+      </button>
+    ) : (
+      <span className="text-xs text-muted-foreground">(p. {page})</span>
+    );
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,10 +68,10 @@ export function TeachClient({
 
   const scoreColor = (s: number) =>
     s >= 80
-      ? "text-green-600"
+      ? "text-green-600 dark:text-green-400"
       : s >= 50
-        ? "text-amber-600"
-        : "text-red-600";
+        ? "text-amber-600 dark:text-amber-400"
+        : "text-red-600 dark:text-red-400";
 
   return (
     <div className="mt-8 space-y-6">
@@ -76,7 +93,7 @@ export function TeachClient({
         </select>
 
         <label htmlFor="explanation" className="mt-4 block text-sm font-medium">
-          Teach it back — no peeking
+          Teach it back, no peeking
         </label>
         <textarea
           id="explanation"
@@ -96,11 +113,11 @@ export function TeachClient({
           </button>
           {explanation.trim().length > 0 && explanation.trim().length < 40 && (
             <span className="text-xs text-muted-foreground">
-              keep going — a few sentences at least
+              keep going, a few sentences at least
             </span>
           )}
         </div>
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
       </form>
 
       {grade && (
@@ -119,7 +136,7 @@ export function TeachClient({
               <ul className="mt-2 space-y-1.5">
                 {grade.strengths.map((s, i) => (
                   <li key={i} className="flex gap-2 text-sm">
-                    <Check className="mt-0.5 size-4 shrink-0 text-green-600" />
+                    <Check className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-400" />
                     <span>{s}</span>
                   </li>
                 ))}
@@ -133,15 +150,12 @@ export function TeachClient({
               <ul className="mt-2 space-y-2.5">
                 {grade.corrections.map((c, i) => (
                   <li key={i} className="flex gap-2 text-sm">
-                    <X className="mt-0.5 size-4 shrink-0 text-red-600" />
+                    <X className="mt-0.5 size-4 shrink-0 text-red-600 dark:text-red-400" />
                     <span>
                       <span className="text-muted-foreground line-through">
                         {c.claim}
                       </span>{" "}
-                      → {c.fix}{" "}
-                      <span className="text-xs text-muted-foreground">
-                        (p. {c.page})
-                      </span>
+                      → {c.fix} {cite(c.page)}
                     </span>
                   </li>
                 ))}
@@ -155,12 +169,9 @@ export function TeachClient({
               <ul className="mt-2 space-y-1.5">
                 {grade.missing.map((m, i) => (
                   <li key={i} className="flex gap-2 text-sm">
-                    <Circle className="mt-1 size-3 shrink-0 text-amber-600" />
+                    <Circle className="mt-1 size-3 shrink-0 text-amber-600 dark:text-amber-400" />
                     <span>
-                      {m.point}{" "}
-                      <span className="text-xs text-muted-foreground">
-                        (p. {m.page})
-                      </span>
+                      {m.point} {cite(m.page)}
                     </span>
                   </li>
                 ))}
@@ -178,6 +189,9 @@ export function TeachClient({
             Try again
           </button>
         </section>
+      )}
+      {openPage && grade?.fileId && (
+        <PageViewer fileId={grade.fileId} page={openPage} onClose={() => setOpenPage(null)} />
       )}
     </div>
   );

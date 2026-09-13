@@ -37,8 +37,15 @@ export function QuizClient({
     setError("");
     setSubmitted(false);
     setPicked({});
-    const res = await fetch(`/api/quiz/${sessionId}`, { method: "POST" });
+    // Drop the old exam so the loading state shows. Leaving it on screen, cleared,
+    // for the ~30s generation invited answers that were then silently replaced.
+    setQuestions(null);
+    const res = await fetch(`/api/quiz/${sessionId}`, { method: "POST" }).catch(() => null);
     setBusy(false);
+    if (!res) {
+      setError("quiz generation failed");
+      return;
+    }
     if (!res.ok) {
       const j = await res.json().catch(() => null);
       setError(j?.error ?? "quiz generation failed");
@@ -57,7 +64,7 @@ export function QuizClient({
       <div className="mt-10">
         <p className="text-sm text-muted-foreground">
           A fresh 10-question mock exam, generated from your materials every
-          time — recall, mechanisms, and calculations, each answer cited.
+          time: recall, mechanisms, and calculations, each answer cited.
         </p>
         <button
           onClick={start}
@@ -66,7 +73,7 @@ export function QuizClient({
         >
           {busy ? "Writing your exam…" : "Start mock exam"}
         </button>
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>}
 
         {history.length > 0 && (
           <section className="mt-8 card-soft p-5">
@@ -121,7 +128,7 @@ export function QuizClient({
           <span className="text-2xl font-bold">
             {score}/{questions.length}
           </span>{" "}
-          — {score >= 8 ? "exam-ready on this material." : score >= 5 ? "solid — review the misses below." : "worth another pass through the wiki before exam day."}
+          {score >= 8 ? "Exam-ready on this material." : score >= 5 ? "Solid. Review the misses below." : "Worth another pass through the wiki before exam day."}
           <button
             onClick={start}
             disabled={busy}
@@ -146,18 +153,22 @@ export function QuizClient({
                 <button
                   key={j}
                   disabled={submitted}
+                  aria-pressed={chosen}
                   onClick={() => setPicked((p) => ({ ...p, [i]: j }))}
-                  className={`block w-full rounded-md border px-3 py-2 text-left text-sm ${
+                  className={`flex w-full items-start gap-2 rounded-md border px-3 py-2 text-left text-sm ${
                     correct
                       ? "border-green-600 bg-green-500/10"
                       : wrong
                         ? "border-red-600 bg-red-500/10"
                         : chosen
-                          ? "border-primary"
+                          ? "border-primary bg-primary/10 font-medium"
                           : "cursor-pointer transition hover:-translate-y-0.5 hover:border-primary/60"
                   }`}
                 >
-                  {opt}
+                  <span aria-hidden className="w-4 shrink-0 text-primary">
+                    {chosen ? "●" : ""}
+                  </span>
+                  <span>{opt}</span>
                 </button>
               );
             })}
